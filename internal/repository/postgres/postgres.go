@@ -11,11 +11,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type Storage struct {
+type Repository struct {
 	db *pgxpool.Pool
 }
 
-func New(cfg config.PostgresDB) (*Storage, error) {
+func New(cfg config.PostgresDB) (*Repository, error) {
 	const op = "internal.repository.postgres.New"
 	// postgres://username:password@localhost:5432/database_name
 	pool, err := pgxpool.New(context.Background(),
@@ -43,14 +43,14 @@ func New(cfg config.PostgresDB) (*Storage, error) {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}
 
-	return &Storage{db: pool}, nil
+	return &Repository{db: pool}, nil
 }
 
-func (s *Storage) Statistic() string {
+func (s *Repository) Statistic() string {
 	return fmt.Sprintf("maxConnCount: %d, idleConnCount: %d", s.db.Stat().MaxConns(), s.db.Stat().IdleConns())
 }
 
-func (s *Storage) SaveTransaction(transaction repository.Transaction) error {
+func (s *Repository) SaveTransaction(transaction repository.TransactionDTO) error {
 	const op = "internal.repository.postgres.SaveTransaction"
 
 	_, err := s.db.Exec(context.Background(),
@@ -67,7 +67,7 @@ func (s *Storage) SaveTransaction(transaction repository.Transaction) error {
 	return nil
 }
 
-func (s *Storage) DeleteTransaction(transactionHash string) error {
+func (s *Repository) DeleteTransaction(transactionHash string) error {
 	const op = "internal.repository.postgres.DeleteTransaction"
 
 	res, err := s.db.Exec(context.Background(),

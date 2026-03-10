@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -10,6 +11,7 @@ import (
 type Config struct {
 	PostgresDB `yaml:"postgres_db"`
 	HTTPServer `yaml:"http_server"`
+	TCPServer  `yaml:"tcp_server"`
 }
 
 type PostgresDB struct {
@@ -21,9 +23,13 @@ type PostgresDB struct {
 }
 
 type HTTPServer struct {
-	Address     string `yaml:"address" env-default:"localhost:8080"`
-	Timeout     string `yaml:"timeout" env-default:"4s"`
-	IdleTimeout string `yaml:"idle_timeout" env-default:"60s"`
+	Address     string        `yaml:"address" env-default:"localhost:8080"`
+	Timeout     time.Duration `yaml:"timeout" env-default:"4s"`
+	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
+}
+
+type TCPServer struct {
+	Address string `yaml:"address" env-default:"localhost:9090"`
 }
 
 func MustLoad() *Config {

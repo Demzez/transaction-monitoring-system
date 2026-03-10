@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package messages;
+
+option go_package = "./proto-generated-messages";
+
+// Общий запрос от клиента
+message Request {
+  string type       = 1;          // "ping", "get_user", "auth", "subscribe" и т.д.
+  int32  request_id = 2;          // для сопоставления ответа (опционально)
+  bytes  payload    = 3;          // сериализованные данные конкретного типа (Any или конкретное сообщение)
+  string token      = 4;          // JWT или другой токен
+}
+
+// Ответ от сервера
+message Response {
+  int32  request_id = 1;
+  bool   ok         = 2;
+  bytes  result     = 3;          // Any или конкретный тип
+  string error      = 4;
+}
+
+// Конкретные payload'ы (примеры)
+message PingRequest {}
+
+message GetUserRequest {
+  int64 user_id = 1;
+}
+
+message GetUserResponse {
+  int64  id    = 1;
+  string name  = 2;
+  string email = 3;
+}
+
+message AuthRequest {
+  string login    = 1;
+  string password = 2;
+}
+
+message AuthResponse {
+  string token = 1;
+  int64  expires_at = 2;
+}

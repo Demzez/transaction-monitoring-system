@@ -12,12 +12,12 @@ import (
 func TestStorage_SaveTransaction(t *testing.T) {
 	cases := []struct {
 		name        string
-		transaction repository.Transaction
+		transaction repository.TransactionDTO
 		respError   string
 	}{
 		{
 			name: "Success",
-			transaction: repository.Transaction{
+			transaction: repository.TransactionDTO{
 				Hash:        "rtgrbe7rew343rnjuh893h",
 				Source:      "localhost",
 				Description: "test transaction",
@@ -29,7 +29,7 @@ func TestStorage_SaveTransaction(t *testing.T) {
 		},
 		{
 			name: "Error unique hash rule",
-			transaction: repository.Transaction{
+			transaction: repository.TransactionDTO{
 				Hash:        "rtgrbe7rew343rnjuh893h",
 				Source:      "localhost",
 				Description: "test transaction",

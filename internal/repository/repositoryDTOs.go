@@ -2,7 +2,7 @@ package repository
 
 import "time"
 
-type Transaction struct {
+type TransactionDTO struct {
 	Hash        string
 	Source      string
 	Description string
