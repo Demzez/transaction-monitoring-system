@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package messages;
+
+option go_package = "./protobuf";
+
+// Общий запрос от клиента
+message Request {
+  string type       = 1;          // "ping", "get_user", "auth", "subscribe" и т.д.
+  bytes  payload    = 2;          // сериализованные данные конкретного типа (Any или конкретное сообщение)
+  string token      = 3;          // JWT или другой токен
+}
+
+message GetTransaction {
+  int64 transaction_id = 1;
+}
+
+// Ответ от сервера
+message Response {
+  bool   ok         = 1;
+  bytes  result     = 2;          // Any или конкретный тип
+  string error      = 3;
+}
+
+message Transaction {
+  string hash         = 1;
+  string source       = 2;
+  string description  = 3;
+  string type         = 4;
+  string status       = 5;
+
+  int64 created_at = 6;
+  int64 updated_at = 7;
+}
+
+message TransactionList {
+  repeated Transaction transactions = 1;
+}

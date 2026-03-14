@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"transaction-monitoring-system/internal/config"
+	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/repository"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -50,7 +52,7 @@ func (s *Repository) Statistic() string {
 	return fmt.Sprintf("maxConnCount: %d, idleConnCount: %d", s.db.Stat().MaxConns(), s.db.Stat().IdleConns())
 }
 
-func (s *Repository) SaveTransaction(transaction repository.TransactionDTO) error {
+func (s *Repository) SaveTransaction(transaction dto.TransactionDTO) error {
 	const op = "internal.repository.postgres.SaveTransaction"
 
 	_, err := s.db.Exec(context.Background(),
@@ -60,6 +62,22 @@ func (s *Repository) SaveTransaction(transaction repository.TransactionDTO) erro
 		var pgErr *pgconn.PgError // Код 23505 - unique_violation
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 			return fmt.Errorf("%s : %w", op, repository.ErrTransactionAlreadyExists)
+		}
+		return fmt.Errorf("%s : %s", op, err)
+	}
+
+	return nil
+}
+
+func (s *Repository) GetTransaction(transactionId int64, transaction *dto.TransactionDTO) error {
+	const op = "internal.repository.postgres.GetTransaction"
+
+	err := s.db.QueryRow(context.Background(),
+		`SELECT hash, source, description, type, status, created_at, updated_at FROM transaction WHERE transaction_id = $1`, transactionId,
+	).Scan(&transaction.Hash, &transaction.Source, &transaction.Description, &transaction.Type, &transaction.Status, &transaction.CreatedAt, &transaction.UpdatedAt)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("%s : %w", op, repository.ErrTransactionNotFound)
 		}
 		return fmt.Errorf("%s : %s", op, err)
 	}

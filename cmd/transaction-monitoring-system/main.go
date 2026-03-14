@@ -9,7 +9,8 @@ import (
 	"transaction-monitoring-system/internal/http-server/post-transaction/save"
 	"transaction-monitoring-system/internal/lib/logger/slog/slogpretty"
 	"transaction-monitoring-system/internal/repository/postgres"
-	socket_connection "transaction-monitoring-system/internal/tcp-server/socket-connection"
+	base_handler "transaction-monitoring-system/internal/tcp-server/base-handler"
+	custom_handler "transaction-monitoring-system/internal/tcp-server/custom-handler"
 )
 
 func main() {
@@ -74,6 +75,10 @@ func initTCPServer(cfg *config.Config, log *slog.Logger, repository *postgres.Re
 			log.Error("failed to accept connection", slog.String("error", err.Error()))
 			continue
 		}
-		go socket_connection.NewHandler(log, repository).Handle(conn)
+
+		handlerKit := base_handler.NewHandler(log,
+			custom_handler.NewTransactionHandler(log, repository))
+
+		go handlerKit.Handle(conn)
 	}
 }

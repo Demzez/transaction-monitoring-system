@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"time"
-	"transaction-monitoring-system/internal/repository"
+	"transaction-monitoring-system/internal/dto"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -20,7 +20,7 @@ type Request struct {
 }
 
 type TransactionSaver interface {
-	SaveTransaction(transaction repository.TransactionDTO) error
+	SaveTransaction(transaction dto.TransactionDTO) error
 }
 
 func New(log *slog.Logger, saver TransactionSaver) http.HandlerFunc {
@@ -51,7 +51,7 @@ func New(log *slog.Logger, saver TransactionSaver) http.HandlerFunc {
 			return
 		}
 
-		err = saver.SaveTransaction(repository.TransactionDTO{
+		err = saver.SaveTransaction(dto.TransactionDTO{
 			Hash:        req.Hash,
 			Source:      req.Source,
 			Description: req.Description,
