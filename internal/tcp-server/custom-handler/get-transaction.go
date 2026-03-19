@@ -20,7 +20,7 @@ type GetTransactionHandler struct {
 	wr  writers.Writer
 }
 
-func NewTransactionHandler(log *slog.Logger, db transactionGetter) *GetTransactionHandler {
+func NewGetTransactionHandler(log *slog.Logger, db transactionGetter) *GetTransactionHandler {
 	return &GetTransactionHandler{
 		log: log,
 		db:  db,

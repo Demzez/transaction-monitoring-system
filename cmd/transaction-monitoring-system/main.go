@@ -65,9 +65,12 @@ func initTCPServer(cfg *config.Config, log *slog.Logger, repository *postgres.Re
 	listener, err := net.Listen("tcp", cfg.TCPServer.Address)
 	if err != nil {
 		log.Error("failed to start TCP server")
-		os.Exit(1)
+		return
 	}
 	defer listener.Close()
+
+	baseHandler := base_handler.NewHandler(log,
+		custom_handler.NewGetTransactionHandler(log, repository))
 
 	for {
 		conn, err := listener.Accept()
@@ -76,9 +79,6 @@ func initTCPServer(cfg *config.Config, log *slog.Logger, repository *postgres.Re
 			continue
 		}
 
-		handlerKit := base_handler.NewHandler(log,
-			custom_handler.NewTransactionHandler(log, repository))
-
-		go handlerKit.Handle(conn)
+		go baseHandler.Handle(conn)
 	}
 }

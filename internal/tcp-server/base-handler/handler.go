@@ -42,6 +42,8 @@ func (h *Handler) Handle(conn net.Conn) {
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
+	handlerlog.Info("new client connected")
+
 	for {
 		lenBuf := make([]byte, 4)
 		_, err := io.ReadFull(conn, lenBuf)
