@@ -48,14 +48,18 @@ func New(cfg config.PostgresDB) (*Repository, error) {
 	return &Repository{db: pool}, nil
 }
 
-func (s *Repository) Statistic() string {
-	return fmt.Sprintf("maxConnCount: %d, idleConnCount: %d", s.db.Stat().MaxConns(), s.db.Stat().IdleConns())
+func (r *Repository) Close() {
+	r.db.Close()
 }
 
-func (s *Repository) SaveTransaction(transaction dto.TransactionDTO) error {
+func (r *Repository) Statistic() string {
+	return fmt.Sprintf("maxConnCount: %d, idleConnCount: %d", r.db.Stat().MaxConns(), r.db.Stat().IdleConns())
+}
+
+func (r *Repository) SaveTransaction(transaction dto.TransactionDTO) error {
 	const op = "internal.repository.postgres.SaveTransaction"
 
-	_, err := s.db.Exec(context.Background(),
+	_, err := r.db.Exec(context.Background(),
 		`INSERT INTO transaction (hash, source, description, type, status, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
 		transaction.Hash, transaction.Source, transaction.Description, transaction.Type, transaction.Status, transaction.CreatedAt, transaction.UpdatedAt)
 	if err != nil {
@@ -69,10 +73,10 @@ func (s *Repository) SaveTransaction(transaction dto.TransactionDTO) error {
 	return nil
 }
 
-func (s *Repository) GetTransaction(transactionId int64, transaction *dto.TransactionDTO) error {
+func (r *Repository) GetTransaction(transactionId int64, transaction *dto.TransactionDTO) error {
 	const op = "internal.repository.postgres.GetTransaction"
 
-	err := s.db.QueryRow(context.Background(),
+	err := r.db.QueryRow(context.Background(),
 		`SELECT hash, source, description, type, status, created_at, updated_at FROM transaction WHERE transaction_id = $1`, transactionId,
 	).Scan(&transaction.Hash, &transaction.Source, &transaction.Description, &transaction.Type, &transaction.Status, &transaction.CreatedAt, &transaction.UpdatedAt)
 	if err != nil {
@@ -85,10 +89,10 @@ func (s *Repository) GetTransaction(transactionId int64, transaction *dto.Transa
 	return nil
 }
 
-func (s *Repository) DeleteTransaction(transactionHash string) error {
+func (r *Repository) DeleteTransaction(transactionHash string) error {
 	const op = "internal.repository.postgres.DeleteTransaction"
 
-	res, err := s.db.Exec(context.Background(),
+	res, err := r.db.Exec(context.Background(),
 		`DELETE FROM transaction WHERE hash = $1`, transactionHash)
 	if err != nil {
 		return fmt.Errorf("%s : %s", op, err)

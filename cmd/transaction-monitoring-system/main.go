@@ -1,16 +1,23 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 	"transaction-monitoring-system/internal/config"
 	"transaction-monitoring-system/internal/http-server/post-transaction/save"
 	"transaction-monitoring-system/internal/lib/logger/slog/slogpretty"
 	"transaction-monitoring-system/internal/repository/postgres"
 	base_handler "transaction-monitoring-system/internal/tcp-server/base-handler"
 	custom_handler "transaction-monitoring-system/internal/tcp-server/custom-handler"
+	"transaction-monitoring-system/internal/tcp-server/writers"
 )
 
 func main() {
@@ -20,6 +27,10 @@ func main() {
 	// init logger
 	log := slogpretty.SetupPrettyLogger()
 	log.Info("config read")
+
+	// graceful shutdown context
+	sigContext, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer cancel()
 
 	// init database
 	repository, err := postgres.New(cfg.PostgresDB)
@@ -33,19 +44,41 @@ func main() {
 	}
 	log.Info("database is connected", slog.String("connection_pool", repository.Statistic()))
 
+	// start servers
+	wg := &sync.WaitGroup{}
 	// init http router & server
-	go initHttpServer(cfg, log, repository)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err = initHttpServer(sigContext, cfg, log, repository)
+		if err != nil {
+			log.Error("failed in initHTTPserver", slog.String("error", err.Error()))
+			return
+		}
+	}()
 
 	// init tcp server
-	initTCPServer(cfg, log, repository)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err = initTCPServer(sigContext, cfg, log, repository)
+		if err != nil {
+			log.Error("failed in initTCPserver", slog.String("error", err.Error()))
+			return
+		}
+	}()
+
+	wg.Wait()
+
+	repository.Close()
+
+	log.Info("----------------------graceful shutdown is completed----------------------")
 }
 
-func initHttpServer(cfg *config.Config, log *slog.Logger, repository *postgres.Repository) {
+func initHttpServer(ctx context.Context, cfg *config.Config, log *slog.Logger, repository *postgres.Repository) error {
 	muxRouter := http.NewServeMux()
 	muxRouter.HandleFunc("POST /post-transaction", save.New(log, repository))
-	log.Info("router for HTTP is initialized")
 
-	log.Info("---HTTP SERVER START---", slog.String("http://address/...", cfg.HTTPServer.Address))
 	srv := &http.Server{
 		Addr:         cfg.HTTPServer.Address,
 		Handler:      muxRouter,
@@ -53,32 +86,64 @@ func initHttpServer(cfg *config.Config, log *slog.Logger, repository *postgres.R
 		WriteTimeout: cfg.HTTPServer.Timeout,
 		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
 	}
+	log.Info("HTTP server is configured")
 
-	if srv.ListenAndServe() != nil {
-		log.Error("failed to start HTTP server")
-		os.Exit(1)
+	go func() {
+		<-ctx.Done()
+		log.Info("HTTP server received shutdown signal, processing shutdown...")
+
+		if err := srv.Shutdown(context.Background()); err != nil {
+			log.Error("HTTP server shutdown error", slog.String("error", err.Error()))
+		}
+	}()
+
+	log.Info("---HTTP SERVER START---", slog.String("http://address/...", cfg.HTTPServer.Address))
+	acErr := srv.ListenAndServe()
+	if acErr != nil {
+		if errors.Is(acErr, http.ErrServerClosed) {
+			return nil
+		}
+		return fmt.Errorf("failed to start HTTP server")
 	}
+	return nil
 }
 
-func initTCPServer(cfg *config.Config, log *slog.Logger, repository *postgres.Repository) {
-	log.Info("---TCP SERVER START---", slog.String("address", cfg.HTTPServer.Address))
+func initTCPServer(ctx context.Context, cfg *config.Config, log *slog.Logger, repository *postgres.Repository) error {
+	wr := &writers.ProtobufWriter{} // TODO: specific responser in main? Ok?
+	baseHandler := base_handler.NewHandler(log,
+		custom_handler.NewGetTransactionHandler(log, repository, wr),
+	)
+
 	listener, err := net.Listen("tcp", cfg.TCPServer.Address)
 	if err != nil {
-		log.Error("failed to start TCP server")
-		return
+		return fmt.Errorf("failed to config TCP server")
 	}
-	defer listener.Close()
+	log.Info("TCP server is configured")
 
-	baseHandler := base_handler.NewHandler(log,
-		custom_handler.NewGetTransactionHandler(log, repository))
+	go func() {
+		<-ctx.Done()
+		log.Info("TCP server received shutdown signal, processing shutdown...")
 
+		if err = listener.Close(); err != nil {
+			log.Error("TCP server shutdown error", slog.String("error", err.Error()))
+		}
+	}()
+
+	log.Info("---TCP SERVER START---", slog.String("address", cfg.TCPServer.Address))
+	wgClient := &sync.WaitGroup{}
 	for {
-		conn, err := listener.Accept()
-		if err != nil {
+		conn, acErr := listener.Accept()
+		if acErr != nil {
+			if errors.Is(acErr, net.ErrClosed) {
+				log.Info("TCP server is closed, wait for all clients to finish...")
+				wgClient.Wait()
+				return nil
+			}
 			log.Error("failed to accept connection", slog.String("error", err.Error()))
 			continue
 		}
 
-		go baseHandler.Handle(conn)
+		wgClient.Add(1)
+		go baseHandler.Handle(conn, wgClient)
 	}
 }

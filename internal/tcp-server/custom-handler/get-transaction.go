@@ -17,14 +17,14 @@ type transactionGetter interface {
 type GetTransactionHandler struct {
 	log *slog.Logger
 	db  transactionGetter
-	wr  writers.Writer
+	wr  writers.WrInterface
 }
 
-func NewGetTransactionHandler(log *slog.Logger, db transactionGetter) *GetTransactionHandler {
+func NewGetTransactionHandler(log *slog.Logger, db transactionGetter, wr writers.WrInterface) *GetTransactionHandler {
 	return &GetTransactionHandler{
 		log: log,
 		db:  db,
-		wr:  writers.Writer{},
+		wr:  wr,
 	}
 }
 

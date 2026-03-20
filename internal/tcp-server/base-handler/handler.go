@@ -5,6 +5,7 @@ import (
 	"io"
 	"log/slog"
 	"net"
+	"sync"
 	"transaction-monitoring-system/protobuf"
 
 	"google.golang.org/protobuf/proto"
@@ -32,8 +33,11 @@ func NewHandler(log *slog.Logger, handlers ...CustomHandler) *Handler {
 	}
 }
 
-func (h *Handler) Handle(conn net.Conn) {
-	defer conn.Close()
+func (h *Handler) Handle(conn net.Conn, wg *sync.WaitGroup) {
+	defer func() {
+		conn.Close()
+		wg.Done()
+	}()
 
 	const op = "internal.tcp-server.base-handler.Handler.Handle"
 

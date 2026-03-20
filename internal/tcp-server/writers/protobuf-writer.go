@@ -9,9 +9,9 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Writer struct{}
+type ProtobufWriter struct{}
 
-func (h *Writer) WriteResponse(conn net.Conn, payload []byte) error {
+func (h *ProtobufWriter) WriteResponse(conn net.Conn, payload []byte) error {
 	const op = "internal.tcp-server.writers.WriteResponse"
 	resp := &protobuf.Response{
 		Ok:     true,
@@ -25,7 +25,7 @@ func (h *Writer) WriteResponse(conn net.Conn, payload []byte) error {
 	return nil
 }
 
-func (h *Writer) WriteError(conn net.Conn, msg string) error {
+func (h *ProtobufWriter) WriteError(conn net.Conn, msg string) error {
 	const op = "internal.tcp-server.writers.WriteError"
 
 	resp := &protobuf.Response{
@@ -40,7 +40,7 @@ func (h *Writer) WriteError(conn net.Conn, msg string) error {
 	return nil
 }
 
-func (h *Writer) WriteMessage(conn net.Conn, message proto.Message) error {
+func (h *ProtobufWriter) WriteMessage(conn net.Conn, message proto.Message) error {
 	const op = "internal.tcp-server.writers.WriteMessage"
 
 	data, err := proto.Marshal(message)
