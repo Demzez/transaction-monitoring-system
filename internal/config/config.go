@@ -9,9 +9,15 @@ import (
 )
 
 type Config struct {
+	JWT        `yaml:"jwt"`
 	PostgresDB `yaml:"postgres_db"`
 	HTTPServer `yaml:"http_server"`
 	TCPServer  `yaml:"tcp_server"`
+}
+
+type JWT struct {
+	Secret   string        `yaml:"secret" env-required:"true" env:"JWT_SECRET"`
+	ExpiryIn time.Duration `yaml:"expiry_in"`
 }
 
 type PostgresDB struct {
@@ -29,7 +35,8 @@ type HTTPServer struct {
 }
 
 type TCPServer struct {
-	Address string `yaml:"address" env-default:"localhost:9090"`
+	Address     string        `yaml:"address" env-default:"localhost:9090"`
+	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
 }
 
 func MustLoad() *Config {

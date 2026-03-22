@@ -1,3 +1,6 @@
+jwt: 
+  secret: "very-good-secury"
+  expiry-in: 1800s
 postgres_db:
   host: "localhost"
   port: "5432"
@@ -10,3 +13,4 @@ http_server:
   idle_timeout: 60s 
 tcp_server:
     address: "localhost:8084"
+    idle_timeout: 30s

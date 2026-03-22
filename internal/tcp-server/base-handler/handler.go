@@ -2,10 +2,13 @@ package base_handler
 
 import (
 	"encoding/binary"
+	"errors"
 	"io"
 	"log/slog"
 	"net"
+	"os"
 	"sync"
+	"time"
 	"transaction-monitoring-system/protobuf"
 
 	"google.golang.org/protobuf/proto"
@@ -19,9 +22,10 @@ type CustomHandler interface {
 type Handler struct {
 	log            *slog.Logger
 	customHandlers map[string]CustomHandler
+	idleTimeout    time.Duration
 }
 
-func NewHandler(log *slog.Logger, handlers ...CustomHandler) *Handler {
+func NewHandler(log *slog.Logger, idleTimeout time.Duration, handlers ...CustomHandler) *Handler {
 	register := make(map[string]CustomHandler)
 	for _, h := range handlers {
 		register[h.Type()] = h
@@ -30,6 +34,7 @@ func NewHandler(log *slog.Logger, handlers ...CustomHandler) *Handler {
 	return &Handler{
 		log:            log,
 		customHandlers: register,
+		idleTimeout:    idleTimeout,
 	}
 }
 
@@ -40,19 +45,27 @@ func (h *Handler) Handle(conn net.Conn, wg *sync.WaitGroup) {
 	}()
 
 	const op = "internal.tcp-server.base-handler.Handler.Handle"
-
 	handlerlog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
 	handlerlog.Info("new client connected")
+	if h.idleTimeout > 0 {
+		if err := conn.SetDeadline(time.Now().Add(h.idleTimeout)); err != nil {
+			handlerlog.Error("failed to set deadline", slog.String("error", err.Error()))
+		}
+	}
 
 	for {
 		lenBuf := make([]byte, 4)
 		_, err := io.ReadFull(conn, lenBuf)
 		if err != nil {
-			handlerlog.Error("something wrong with length prefix", slog.String("error", err.Error()))
+			if errors.Is(err, os.ErrDeadlineExceeded) {
+				handlerlog.Warn("timeout exceeded", slog.String("error", err.Error()))
+			} else {
+				handlerlog.Error("something wrong with length prefix", slog.String("error", err.Error()))
+			}
 			return
 		}
 
@@ -87,3 +100,21 @@ func (h *Handler) Handle(conn net.Conn, wg *sync.WaitGroup) {
 		handler.Handle(conn, &req)
 	}
 }
+
+// TODO : token validate
+/*
+if req.Token == "" {
+        handlerlog.Error("missing token")
+        _ = h.wr.WriteError(conn, "missing token") // use writer to send error
+        return
+    }
+    // You need to inject the JWT secret into the handler. For simplicity, you can add it to Handler struct.
+    // Let's add a field: jwtSecret string
+    // Then validate:
+    _, err = jwt.ValidateToken(req.Token, h.jwtSecret)
+    if err != nil {
+        handlerlog.Error("invalid token", slog.String("error", err.Error()))
+        _ = h.wr.WriteError(conn, "invalid token")
+        return
+    }
+*/

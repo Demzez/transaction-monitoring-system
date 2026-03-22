@@ -37,7 +37,7 @@ func (h *GetTransactionHandler) Handle(conn net.Conn, req *protobuf.Request) {
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	var pd protobuf.GetTransaction
+	var pd protobuf.PullTransaction
 	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
 		handlerlog.Error("bad unmarshal payload", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "bad unmarshal payload"); err != nil {
@@ -63,7 +63,7 @@ func (h *GetTransactionHandler) Handle(conn net.Conn, req *protobuf.Request) {
 		return
 	}
 
-	data, err := proto.Marshal(dto.DTOToProto(&transactionDTO))
+	data, err := proto.Marshal(transactionDTO.DTOToProto())
 	if err != nil {
 		handlerlog.Error("failed to marshal transaction", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "failed to marshal transaction"); err != nil {

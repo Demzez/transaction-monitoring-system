@@ -82,51 +82,7 @@ func (x *Request) GetToken() string {
 	return ""
 }
 
-type GetTransaction struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetTransaction) Reset() {
-	*x = GetTransaction{}
-	mi := &file_protobuf_messages_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetTransaction) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetTransaction) ProtoMessage() {}
-
-func (x *GetTransaction) ProtoReflect() protoreflect.Message {
-	mi := &file_protobuf_messages_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetTransaction.ProtoReflect.Descriptor instead.
-func (*GetTransaction) Descriptor() ([]byte, []int) {
-	return file_protobuf_messages_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *GetTransaction) GetTransactionId() int64 {
-	if x != nil {
-		return x.TransactionId
-	}
-	return 0
-}
-
-// Ответ от сервера
+// Общий ответ от сервера
 type Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ok            bool                   `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
@@ -138,7 +94,7 @@ type Response struct {
 
 func (x *Response) Reset() {
 	*x = Response{}
-	mi := &file_protobuf_messages_proto_msgTypes[2]
+	mi := &file_protobuf_messages_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -150,7 +106,7 @@ func (x *Response) String() string {
 func (*Response) ProtoMessage() {}
 
 func (x *Response) ProtoReflect() protoreflect.Message {
-	mi := &file_protobuf_messages_proto_msgTypes[2]
+	mi := &file_protobuf_messages_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -163,7 +119,7 @@ func (x *Response) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Response.ProtoReflect.Descriptor instead.
 func (*Response) Descriptor() ([]byte, []int) {
-	return file_protobuf_messages_proto_rawDescGZIP(), []int{2}
+	return file_protobuf_messages_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Response) GetOk() bool {
@@ -187,7 +143,52 @@ func (x *Response) GetError() string {
 	return ""
 }
 
-type Transaction struct {
+// Кастомные структуры
+type PullTransaction struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PullTransaction) Reset() {
+	*x = PullTransaction{}
+	mi := &file_protobuf_messages_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PullTransaction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PullTransaction) ProtoMessage() {}
+
+func (x *PullTransaction) ProtoReflect() protoreflect.Message {
+	mi := &file_protobuf_messages_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PullTransaction.ProtoReflect.Descriptor instead.
+func (*PullTransaction) Descriptor() ([]byte, []int) {
+	return file_protobuf_messages_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PullTransaction) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
+}
+
+type PushTransaction struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Hash          string                 `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
 	Source        string                 `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`
@@ -200,20 +201,20 @@ type Transaction struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Transaction) Reset() {
-	*x = Transaction{}
+func (x *PushTransaction) Reset() {
+	*x = PushTransaction{}
 	mi := &file_protobuf_messages_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Transaction) String() string {
+func (x *PushTransaction) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Transaction) ProtoMessage() {}
+func (*PushTransaction) ProtoMessage() {}
 
-func (x *Transaction) ProtoReflect() protoreflect.Message {
+func (x *PushTransaction) ProtoReflect() protoreflect.Message {
 	mi := &file_protobuf_messages_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -225,81 +226,81 @@ func (x *Transaction) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Transaction.ProtoReflect.Descriptor instead.
-func (*Transaction) Descriptor() ([]byte, []int) {
+// Deprecated: Use PushTransaction.ProtoReflect.Descriptor instead.
+func (*PushTransaction) Descriptor() ([]byte, []int) {
 	return file_protobuf_messages_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Transaction) GetHash() string {
+func (x *PushTransaction) GetHash() string {
 	if x != nil {
 		return x.Hash
 	}
 	return ""
 }
 
-func (x *Transaction) GetSource() string {
+func (x *PushTransaction) GetSource() string {
 	if x != nil {
 		return x.Source
 	}
 	return ""
 }
 
-func (x *Transaction) GetDescription() string {
+func (x *PushTransaction) GetDescription() string {
 	if x != nil {
 		return x.Description
 	}
 	return ""
 }
 
-func (x *Transaction) GetType() string {
+func (x *PushTransaction) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *Transaction) GetStatus() string {
+func (x *PushTransaction) GetStatus() string {
 	if x != nil {
 		return x.Status
 	}
 	return ""
 }
 
-func (x *Transaction) GetCreatedAt() int64 {
+func (x *PushTransaction) GetCreatedAt() int64 {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return 0
 }
 
-func (x *Transaction) GetUpdatedAt() int64 {
+func (x *PushTransaction) GetUpdatedAt() int64 {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return 0
 }
 
-type TransactionList struct {
+type PullTransactionList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Transactions  []*Transaction         `protobuf:"bytes,1,rep,name=transactions,proto3" json:"transactions,omitempty"`
+	Transactions  []*PullTransaction     `protobuf:"bytes,1,rep,name=transactions,proto3" json:"transactions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *TransactionList) Reset() {
-	*x = TransactionList{}
+func (x *PullTransactionList) Reset() {
+	*x = PullTransactionList{}
 	mi := &file_protobuf_messages_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TransactionList) String() string {
+func (x *PullTransactionList) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TransactionList) ProtoMessage() {}
+func (*PullTransactionList) ProtoMessage() {}
 
-func (x *TransactionList) ProtoReflect() protoreflect.Message {
+func (x *PullTransactionList) ProtoReflect() protoreflect.Message {
 	mi := &file_protobuf_messages_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -311,12 +312,12 @@ func (x *TransactionList) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TransactionList.ProtoReflect.Descriptor instead.
-func (*TransactionList) Descriptor() ([]byte, []int) {
+// Deprecated: Use PullTransactionList.ProtoReflect.Descriptor instead.
+func (*PullTransactionList) Descriptor() ([]byte, []int) {
 	return file_protobuf_messages_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *TransactionList) GetTransactions() []*Transaction {
+func (x *PullTransactionList) GetTransactions() []*PullTransaction {
 	if x != nil {
 		return x.Transactions
 	}
@@ -331,14 +332,14 @@ const file_protobuf_messages_proto_rawDesc = "" +
 	"\aRequest\x12\x12\n" +
 	"\x04type\x18\x01 \x01(\tR\x04type\x12\x18\n" +
 	"\apayload\x18\x02 \x01(\fR\apayload\x12\x14\n" +
-	"\x05token\x18\x03 \x01(\tR\x05token\"7\n" +
-	"\x0eGetTransaction\x12%\n" +
-	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\"H\n" +
+	"\x05token\x18\x03 \x01(\tR\x05token\"H\n" +
 	"\bResponse\x12\x0e\n" +
 	"\x02ok\x18\x01 \x01(\bR\x02ok\x12\x16\n" +
 	"\x06result\x18\x02 \x01(\fR\x06result\x12\x14\n" +
-	"\x05error\x18\x03 \x01(\tR\x05error\"\xc5\x01\n" +
-	"\vTransaction\x12\x12\n" +
+	"\x05error\x18\x03 \x01(\tR\x05error\"8\n" +
+	"\x0fPullTransaction\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\"\xc9\x01\n" +
+	"\x0fPushTransaction\x12\x12\n" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\x12\x16\n" +
 	"\x06source\x18\x02 \x01(\tR\x06source\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x12\n" +
@@ -347,9 +348,9 @@ const file_protobuf_messages_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\x03R\tupdatedAt\"L\n" +
-	"\x0fTransactionList\x129\n" +
-	"\ftransactions\x18\x01 \x03(\v2\x15.messages.TransactionR\ftransactionsB\fZ\n" +
+	"updated_at\x18\a \x01(\x03R\tupdatedAt\"T\n" +
+	"\x13PullTransactionList\x12=\n" +
+	"\ftransactions\x18\x01 \x03(\v2\x19.messages.PullTransactionR\ftransactionsB\fZ\n" +
 	"./protobufb\x06proto3"
 
 var (
@@ -366,14 +367,14 @@ func file_protobuf_messages_proto_rawDescGZIP() []byte {
 
 var file_protobuf_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_protobuf_messages_proto_goTypes = []any{
-	(*Request)(nil),         // 0: messages.Request
-	(*GetTransaction)(nil),  // 1: messages.GetTransaction
-	(*Response)(nil),        // 2: messages.Response
-	(*Transaction)(nil),     // 3: messages.Transaction
-	(*TransactionList)(nil), // 4: messages.TransactionList
+	(*Request)(nil),             // 0: messages.Request
+	(*Response)(nil),            // 1: messages.Response
+	(*PullTransaction)(nil),     // 2: messages.PullTransaction
+	(*PushTransaction)(nil),     // 3: messages.PushTransaction
+	(*PullTransactionList)(nil), // 4: messages.PullTransactionList
 }
 var file_protobuf_messages_proto_depIdxs = []int32{
-	3, // 0: messages.TransactionList.transactions:type_name -> messages.Transaction
+	2, // 0: messages.PullTransactionList.transactions:type_name -> messages.PullTransaction
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

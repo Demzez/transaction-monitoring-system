@@ -15,12 +15,12 @@ type TransactionDTO struct {
 	UpdatedAt   time.Time
 }
 
-func DTOToProto(t *TransactionDTO) *protobuf.Transaction {
+func (t *TransactionDTO) DTOToProto() *protobuf.PushTransaction {
 	if t == nil {
 		return nil
 	}
 
-	return &protobuf.Transaction{
+	return &protobuf.PushTransaction{
 		Hash:        t.Hash,
 		Source:      t.Source,
 		Description: t.Description,
@@ -28,21 +28,5 @@ func DTOToProto(t *TransactionDTO) *protobuf.Transaction {
 		Status:      t.Status,
 		CreatedAt:   t.CreatedAt.Unix(),
 		UpdatedAt:   t.UpdatedAt.Unix(),
-	}
-}
-
-func ProtoToDTO(t *protobuf.Transaction) *TransactionDTO {
-	if t == nil {
-		return nil
-	}
-
-	return &TransactionDTO{
-		Hash:        t.Hash,
-		Source:      t.Source,
-		Description: t.Description,
-		Type:        t.Type,
-		Status:      t.Status,
-		CreatedAt:   time.Unix(t.CreatedAt, 0).UTC(),
-		UpdatedAt:   time.Unix(t.UpdatedAt, 0).UTC(),
 	}
 }
