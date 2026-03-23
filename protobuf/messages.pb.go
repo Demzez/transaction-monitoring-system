@@ -21,6 +21,86 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type AuthenticationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	NewToken      string                 `protobuf:"bytes,1,opt,name=newToken,proto3" json:"newToken,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AuthenticationRequest) Reset() {
+	*x = AuthenticationRequest{}
+	mi := &file_protobuf_messages_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuthenticationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuthenticationRequest) ProtoMessage() {}
+
+func (x *AuthenticationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_protobuf_messages_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuthenticationRequest.ProtoReflect.Descriptor instead.
+func (*AuthenticationRequest) Descriptor() ([]byte, []int) {
+	return file_protobuf_messages_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *AuthenticationRequest) GetNewToken() string {
+	if x != nil {
+		return x.NewToken
+	}
+	return ""
+}
+
+type AuthenticationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AuthenticationResponse) Reset() {
+	*x = AuthenticationResponse{}
+	mi := &file_protobuf_messages_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuthenticationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuthenticationResponse) ProtoMessage() {}
+
+func (x *AuthenticationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_protobuf_messages_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuthenticationResponse.ProtoReflect.Descriptor instead.
+func (*AuthenticationResponse) Descriptor() ([]byte, []int) {
+	return file_protobuf_messages_proto_rawDescGZIP(), []int{1}
+}
+
 // Общий запрос от клиента
 type Request struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -33,7 +113,7 @@ type Request struct {
 
 func (x *Request) Reset() {
 	*x = Request{}
-	mi := &file_protobuf_messages_proto_msgTypes[0]
+	mi := &file_protobuf_messages_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +125,7 @@ func (x *Request) String() string {
 func (*Request) ProtoMessage() {}
 
 func (x *Request) ProtoReflect() protoreflect.Message {
-	mi := &file_protobuf_messages_proto_msgTypes[0]
+	mi := &file_protobuf_messages_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -58,7 +138,7 @@ func (x *Request) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Request.ProtoReflect.Descriptor instead.
 func (*Request) Descriptor() ([]byte, []int) {
-	return file_protobuf_messages_proto_rawDescGZIP(), []int{0}
+	return file_protobuf_messages_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Request) GetType() string {
@@ -94,7 +174,7 @@ type Response struct {
 
 func (x *Response) Reset() {
 	*x = Response{}
-	mi := &file_protobuf_messages_proto_msgTypes[1]
+	mi := &file_protobuf_messages_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -106,7 +186,7 @@ func (x *Response) String() string {
 func (*Response) ProtoMessage() {}
 
 func (x *Response) ProtoReflect() protoreflect.Message {
-	mi := &file_protobuf_messages_proto_msgTypes[1]
+	mi := &file_protobuf_messages_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -119,7 +199,7 @@ func (x *Response) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Response.ProtoReflect.Descriptor instead.
 func (*Response) Descriptor() ([]byte, []int) {
-	return file_protobuf_messages_proto_rawDescGZIP(), []int{1}
+	return file_protobuf_messages_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Response) GetOk() bool {
@@ -144,28 +224,28 @@ func (x *Response) GetError() string {
 }
 
 // Кастомные структуры
-type PullTransaction struct {
+type ReqTransaction struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PullTransaction) Reset() {
-	*x = PullTransaction{}
-	mi := &file_protobuf_messages_proto_msgTypes[2]
+func (x *ReqTransaction) Reset() {
+	*x = ReqTransaction{}
+	mi := &file_protobuf_messages_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PullTransaction) String() string {
+func (x *ReqTransaction) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PullTransaction) ProtoMessage() {}
+func (*ReqTransaction) ProtoMessage() {}
 
-func (x *PullTransaction) ProtoReflect() protoreflect.Message {
-	mi := &file_protobuf_messages_proto_msgTypes[2]
+func (x *ReqTransaction) ProtoReflect() protoreflect.Message {
+	mi := &file_protobuf_messages_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -176,19 +256,19 @@ func (x *PullTransaction) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PullTransaction.ProtoReflect.Descriptor instead.
-func (*PullTransaction) Descriptor() ([]byte, []int) {
-	return file_protobuf_messages_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use ReqTransaction.ProtoReflect.Descriptor instead.
+func (*ReqTransaction) Descriptor() ([]byte, []int) {
+	return file_protobuf_messages_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *PullTransaction) GetTransactionId() int64 {
+func (x *ReqTransaction) GetTransactionId() int64 {
 	if x != nil {
 		return x.TransactionId
 	}
 	return 0
 }
 
-type PushTransaction struct {
+type RespTransaction struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Hash          string                 `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
 	Source        string                 `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`
@@ -201,21 +281,21 @@ type PushTransaction struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PushTransaction) Reset() {
-	*x = PushTransaction{}
-	mi := &file_protobuf_messages_proto_msgTypes[3]
+func (x *RespTransaction) Reset() {
+	*x = RespTransaction{}
+	mi := &file_protobuf_messages_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PushTransaction) String() string {
+func (x *RespTransaction) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PushTransaction) ProtoMessage() {}
+func (*RespTransaction) ProtoMessage() {}
 
-func (x *PushTransaction) ProtoReflect() protoreflect.Message {
-	mi := &file_protobuf_messages_proto_msgTypes[3]
+func (x *RespTransaction) ProtoReflect() protoreflect.Message {
+	mi := &file_protobuf_messages_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -226,82 +306,82 @@ func (x *PushTransaction) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PushTransaction.ProtoReflect.Descriptor instead.
-func (*PushTransaction) Descriptor() ([]byte, []int) {
-	return file_protobuf_messages_proto_rawDescGZIP(), []int{3}
+// Deprecated: Use RespTransaction.ProtoReflect.Descriptor instead.
+func (*RespTransaction) Descriptor() ([]byte, []int) {
+	return file_protobuf_messages_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *PushTransaction) GetHash() string {
+func (x *RespTransaction) GetHash() string {
 	if x != nil {
 		return x.Hash
 	}
 	return ""
 }
 
-func (x *PushTransaction) GetSource() string {
+func (x *RespTransaction) GetSource() string {
 	if x != nil {
 		return x.Source
 	}
 	return ""
 }
 
-func (x *PushTransaction) GetDescription() string {
+func (x *RespTransaction) GetDescription() string {
 	if x != nil {
 		return x.Description
 	}
 	return ""
 }
 
-func (x *PushTransaction) GetType() string {
+func (x *RespTransaction) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *PushTransaction) GetStatus() string {
+func (x *RespTransaction) GetStatus() string {
 	if x != nil {
 		return x.Status
 	}
 	return ""
 }
 
-func (x *PushTransaction) GetCreatedAt() int64 {
+func (x *RespTransaction) GetCreatedAt() int64 {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return 0
 }
 
-func (x *PushTransaction) GetUpdatedAt() int64 {
+func (x *RespTransaction) GetUpdatedAt() int64 {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return 0
 }
 
-type PullTransactionList struct {
+type ReqTransactionList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Transactions  []*PullTransaction     `protobuf:"bytes,1,rep,name=transactions,proto3" json:"transactions,omitempty"`
+	Transactions  []*ReqTransaction      `protobuf:"bytes,1,rep,name=transactions,proto3" json:"transactions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PullTransactionList) Reset() {
-	*x = PullTransactionList{}
-	mi := &file_protobuf_messages_proto_msgTypes[4]
+func (x *ReqTransactionList) Reset() {
+	*x = ReqTransactionList{}
+	mi := &file_protobuf_messages_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PullTransactionList) String() string {
+func (x *ReqTransactionList) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PullTransactionList) ProtoMessage() {}
+func (*ReqTransactionList) ProtoMessage() {}
 
-func (x *PullTransactionList) ProtoReflect() protoreflect.Message {
-	mi := &file_protobuf_messages_proto_msgTypes[4]
+func (x *ReqTransactionList) ProtoReflect() protoreflect.Message {
+	mi := &file_protobuf_messages_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -312,23 +392,62 @@ func (x *PullTransactionList) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PullTransactionList.ProtoReflect.Descriptor instead.
-func (*PullTransactionList) Descriptor() ([]byte, []int) {
-	return file_protobuf_messages_proto_rawDescGZIP(), []int{4}
+// Deprecated: Use ReqTransactionList.ProtoReflect.Descriptor instead.
+func (*ReqTransactionList) Descriptor() ([]byte, []int) {
+	return file_protobuf_messages_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *PullTransactionList) GetTransactions() []*PullTransaction {
+func (x *ReqTransactionList) GetTransactions() []*ReqTransaction {
 	if x != nil {
 		return x.Transactions
 	}
 	return nil
 }
 
+type RespTransactionList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RespTransactionList) Reset() {
+	*x = RespTransactionList{}
+	mi := &file_protobuf_messages_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RespTransactionList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RespTransactionList) ProtoMessage() {}
+
+func (x *RespTransactionList) ProtoReflect() protoreflect.Message {
+	mi := &file_protobuf_messages_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RespTransactionList.ProtoReflect.Descriptor instead.
+func (*RespTransactionList) Descriptor() ([]byte, []int) {
+	return file_protobuf_messages_proto_rawDescGZIP(), []int{7}
+}
+
 var File_protobuf_messages_proto protoreflect.FileDescriptor
 
 const file_protobuf_messages_proto_rawDesc = "" +
 	"\n" +
-	"\x17protobuf/messages.proto\x12\bmessages\"M\n" +
+	"\x17protobuf/messages.proto\x12\bmessages\"3\n" +
+	"\x15AuthenticationRequest\x12\x1a\n" +
+	"\bnewToken\x18\x01 \x01(\tR\bnewToken\"\x18\n" +
+	"\x16AuthenticationResponse\"M\n" +
 	"\aRequest\x12\x12\n" +
 	"\x04type\x18\x01 \x01(\tR\x04type\x12\x18\n" +
 	"\apayload\x18\x02 \x01(\fR\apayload\x12\x14\n" +
@@ -336,10 +455,10 @@ const file_protobuf_messages_proto_rawDesc = "" +
 	"\bResponse\x12\x0e\n" +
 	"\x02ok\x18\x01 \x01(\bR\x02ok\x12\x16\n" +
 	"\x06result\x18\x02 \x01(\fR\x06result\x12\x14\n" +
-	"\x05error\x18\x03 \x01(\tR\x05error\"8\n" +
-	"\x0fPullTransaction\x12%\n" +
+	"\x05error\x18\x03 \x01(\tR\x05error\"7\n" +
+	"\x0eReqTransaction\x12%\n" +
 	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\"\xc9\x01\n" +
-	"\x0fPushTransaction\x12\x12\n" +
+	"\x0fRespTransaction\x12\x12\n" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\x12\x16\n" +
 	"\x06source\x18\x02 \x01(\tR\x06source\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x12\n" +
@@ -348,9 +467,10 @@ const file_protobuf_messages_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\x03R\tupdatedAt\"T\n" +
-	"\x13PullTransactionList\x12=\n" +
-	"\ftransactions\x18\x01 \x03(\v2\x19.messages.PullTransactionR\ftransactionsB\fZ\n" +
+	"updated_at\x18\a \x01(\x03R\tupdatedAt\"R\n" +
+	"\x12ReqTransactionList\x12<\n" +
+	"\ftransactions\x18\x01 \x03(\v2\x18.messages.ReqTransactionR\ftransactions\"\x15\n" +
+	"\x13RespTransactionListB\fZ\n" +
 	"./protobufb\x06proto3"
 
 var (
@@ -365,16 +485,19 @@ func file_protobuf_messages_proto_rawDescGZIP() []byte {
 	return file_protobuf_messages_proto_rawDescData
 }
 
-var file_protobuf_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_protobuf_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_protobuf_messages_proto_goTypes = []any{
-	(*Request)(nil),             // 0: messages.Request
-	(*Response)(nil),            // 1: messages.Response
-	(*PullTransaction)(nil),     // 2: messages.PullTransaction
-	(*PushTransaction)(nil),     // 3: messages.PushTransaction
-	(*PullTransactionList)(nil), // 4: messages.PullTransactionList
+	(*AuthenticationRequest)(nil),  // 0: messages.AuthenticationRequest
+	(*AuthenticationResponse)(nil), // 1: messages.AuthenticationResponse
+	(*Request)(nil),                // 2: messages.Request
+	(*Response)(nil),               // 3: messages.Response
+	(*ReqTransaction)(nil),         // 4: messages.ReqTransaction
+	(*RespTransaction)(nil),        // 5: messages.RespTransaction
+	(*ReqTransactionList)(nil),     // 6: messages.ReqTransactionList
+	(*RespTransactionList)(nil),    // 7: messages.RespTransactionList
 }
 var file_protobuf_messages_proto_depIdxs = []int32{
-	2, // 0: messages.PullTransactionList.transactions:type_name -> messages.PullTransaction
+	4, // 0: messages.ReqTransactionList.transactions:type_name -> messages.ReqTransaction
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -393,7 +516,7 @@ func file_protobuf_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protobuf_messages_proto_rawDesc), len(file_protobuf_messages_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

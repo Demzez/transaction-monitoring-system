@@ -19,7 +19,7 @@ type CustomHandler interface {
 	Type() string
 }
 
-type Handler struct {
+type Handler struct { // TODO: передать сюда конфиг для проверки токена
 	log            *slog.Logger
 	customHandlers map[string]CustomHandler
 	idleTimeout    time.Duration
@@ -45,12 +45,14 @@ func (h *Handler) Handle(conn net.Conn, wg *sync.WaitGroup) {
 	}()
 
 	const op = "internal.tcp-server.base-handler.Handler.Handle"
+
 	handlerlog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
 	handlerlog.Info("new client connected")
+
 	if h.idleTimeout > 0 {
 		if err := conn.SetDeadline(time.Now().Add(h.idleTimeout)); err != nil {
 			handlerlog.Error("failed to set deadline", slog.String("error", err.Error()))
@@ -101,7 +103,6 @@ func (h *Handler) Handle(conn net.Conn, wg *sync.WaitGroup) {
 	}
 }
 
-// TODO : token validate
 /*
 if req.Token == "" {
         handlerlog.Error("missing token")

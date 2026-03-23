@@ -15,12 +15,12 @@ type TransactionDTO struct {
 	UpdatedAt   time.Time
 }
 
-func (t *TransactionDTO) DTOToProto() *protobuf.PushTransaction {
+func (t *TransactionDTO) DTOToProto() *protobuf.RespTransaction {
 	if t == nil {
 		return nil
 	}
 
-	return &protobuf.PushTransaction{
+	return &protobuf.RespTransaction{
 		Hash:        t.Hash,
 		Source:      t.Source,
 		Description: t.Description,

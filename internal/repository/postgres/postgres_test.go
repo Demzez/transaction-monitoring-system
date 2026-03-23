@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestStorage_SaveTransaction(t *testing.T) {
+func TestRepository_SaveTransaction(t *testing.T) {
 	cases := []struct {
 		name        string
 		transaction dto.TransactionDTO
@@ -62,7 +62,7 @@ func TestStorage_SaveTransaction(t *testing.T) {
 	}
 }
 
-func TestStorage_DeleteTransaction(t *testing.T) {
+func TestRepository_DeleteTransaction(t *testing.T) {
 	cases := []struct {
 		name            string
 		transactionHash string
