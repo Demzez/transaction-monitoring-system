@@ -27,7 +27,7 @@ func New(cfg config.PostgresDB) (*Repository, error) {
 	}()
 
 	_, err = pool.Exec(context.Background(),
-		`CREATE TABLE IF NOT EXISTS transaction (
+		`CREATE TABLE IF NOT EXISTS "transaction" (
         transaction_id SERIAL PRIMARY KEY,
         hash TEXT NOT NULL UNIQUE,
         source TEXT NOT NULL,
@@ -35,7 +35,14 @@ func New(cfg config.PostgresDB) (*Repository, error) {
         type TEXT NOT NULL,
         status TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL,
-        updated_at TIMESTAMPTZ)`)
+        updated_at TIMESTAMPTZ);
+		
+		CREATE TABLE IF NOT EXISTS "user" (
+		user_id SERIAL PRIMARY KEY,
+		login TEXT NOT NULL UNIQUE,
+		password TEXT NOT NULL,
+		created_at TIMESTAMPTZ NOT NULL);
+`)
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}

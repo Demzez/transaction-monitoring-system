@@ -1,4 +1,4 @@
-package custom_handler
+package handler
 
 import (
 	"log/slog"
@@ -11,7 +11,7 @@ import (
 )
 
 type TransactionGetter interface {
-	GetTransaction(int64, *dto.TransactionDTO) error
+	GetTransaction(int64) (dto.TransactionDTO, error)
 }
 
 type GetTransactionHandler struct {
@@ -30,53 +30,52 @@ func NewGetTransactionHandler(log *slog.Logger, db TransactionGetter, wr writers
 
 func (h *GetTransactionHandler) Handle(conn net.Conn, req *protobuf.Request) {
 
-	const op = "internal.tcp-server.custom-handler.get-transaction.Handle"
+	const op = "internal.tcp-server.handler.get-transaction.Process"
 
-	handlerlog := h.log.With(
+	handlerLog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
 	var pd protobuf.ReqTransaction
 	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
-		handlerlog.Error("bad unmarshal payload", slog.String("error", err.Error()))
+		handlerLog.Error("bad unmarshal payload", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "bad request"); err != nil {
-			handlerlog.Error("failed to write response with error", slog.String("error", err.Error()))
+			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
 		}
 		return
 	}
 	if pd.TransactionId == 0 {
-		handlerlog.Info("transaction_id is a required")
+		handlerLog.Info("transaction_id is a required")
 		if err := h.wr.WriteError(conn, "transaction_id is a required"); err != nil {
-			handlerlog.Error("failed to write response with error", slog.String("error", err.Error()))
+			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
 		}
 		return
 	}
 
-	var transactionDTO dto.TransactionDTO
-	err := h.db.GetTransaction(pd.TransactionId, &transactionDTO)
+	transactionDTO, err := h.db.GetTransaction(pd.TransactionId)
 	if err != nil {
-		handlerlog.Error("failed to get transaction", slog.String("error", err.Error()))
+		handlerLog.Error("failed to get transaction", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
-			handlerlog.Error("failed to write response with error", slog.String("error", err.Error()))
+			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
 		}
 		return
 	}
 
 	data, err := proto.Marshal(transactionDTO.DTOToProto())
 	if err != nil {
-		handlerlog.Error("failed to marshal transaction", slog.String("error", err.Error()))
+		handlerLog.Error("failed to marshal transaction", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
-			handlerlog.Error("failed to response with error", slog.String("error", err.Error()))
+			handlerLog.Error("failed to response with error", slog.String("error", err.Error()))
 		}
 		return
 	}
 
 	if err = h.wr.WriteResponse(conn, data); err != nil {
-		handlerlog.Error("failed to response", slog.String("error", err.Error()))
+		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
 
-	handlerlog.Info("transaction successfully sent")
+	handlerLog.Info("transaction successfully sent")
 }
 
 func (h *GetTransactionHandler) Type() string {

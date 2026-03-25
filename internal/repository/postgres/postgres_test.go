@@ -39,7 +39,7 @@ func TestRepository_SaveTransaction(t *testing.T) {
 				CreatedAt:   time.Now(),
 				UpdatedAt:   time.Now(),
 			},
-			respError: "internal.repository.postgres.SaveTransaction : " + repository.ErrTransactionAlreadyExists.Error(),
+			respError: "internal.repository.postgres.transaction.SaveTransaction : " + repository.ErrRecordAlreadyExists.Error(),
 		},
 	}
 	cfg := config.MustLoad()
@@ -75,7 +75,7 @@ func TestRepository_DeleteTransaction(t *testing.T) {
 		{
 			name:            "Error transaction not found",
 			transactionHash: "rtgrbe7rew343rnjuh893h",
-			respError:       "internal.repository.postgres.DeleteTransaction : " + repository.ErrTransactionNotFound.Error(),
+			respError:       "internal.repository.postgres.transaction.DeleteTransaction : " + repository.ErrRecordNotFound.Error(),
 		},
 	}
 	cfg := config.MustLoad()

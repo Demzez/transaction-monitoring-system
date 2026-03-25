@@ -4,13 +4,6 @@ package messages;
 
 option go_package = "./protobuf";
 
-message AuthenticationRequest {
-  string newToken = 1;
-}
-message AuthenticationResponse {
-  
-}
-
 // Общий запрос от клиента
 message Request {
   string type       = 1;          // "ping", "get_user", "auth", "subscribe" и т.д.
@@ -24,7 +17,7 @@ message Response {
   string error      = 3;
 }
 
-// Кастомные структуры
+// Структуры транзакций
 message ReqTransaction {
   int64 transaction_id = 1;
 }
@@ -38,8 +31,23 @@ message RespTransaction {
   int64 created_at = 6;
   int64 updated_at = 7;
 }
-
 message ReqTransactionList {
   repeated ReqTransaction transactions = 1;
 }
-message RespTransactionList{}
+message RespTransactionList{
+  
+}
+
+// Структуры пользователей
+message ReqRegistration {
+  string newToken = 1;
+}
+message RespRegistration {
+
+}
+message ReqAuthentication {
+  string newToken = 1;
+}
+message RespAuthentication {
+
+}
