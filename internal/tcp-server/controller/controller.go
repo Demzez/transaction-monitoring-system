@@ -9,8 +9,9 @@ import (
 	"os"
 	"sync"
 	"time"
+	custom_error "transaction-monitoring-system/internal/lib/custom-error"
 	"transaction-monitoring-system/protobuf"
-
+	
 	"google.golang.org/protobuf/proto"
 )
 
@@ -20,9 +21,9 @@ type Handler interface {
 }
 
 type Controller struct { // TODO: передать сюда конфиг для проверки токена && refactoring!!!
-	log            *slog.Logger
-	customHandlers map[string]Handler
-	idleTimeout    time.Duration
+	log         *slog.Logger
+	handlers    map[string]Handler
+	idleTimeout time.Duration
 }
 
 func NewController(log *slog.Logger, idleTimeout time.Duration, handlers ...Handler) *Controller {
@@ -30,85 +31,124 @@ func NewController(log *slog.Logger, idleTimeout time.Duration, handlers ...Hand
 	for _, h := range handlers {
 		register[h.Type()] = h
 	}
-
+	
 	return &Controller{
-		log:            log,
-		customHandlers: register,
-		idleTimeout:    idleTimeout,
+		log:         log,
+		handlers:    register,
+		idleTimeout: idleTimeout,
 	}
 }
 
-func (h *Controller) Process(conn net.Conn, wg *sync.WaitGroup) {
+func (c *Controller) Process(conn net.Conn, wg *sync.WaitGroup) {
 	defer func() {
 		conn.Close()
 		wg.Done()
 	}()
-
+	
 	const op = "internal.tcp-server.controller.handler.Process"
-
-	controllerLog := h.log.With(
+	
+	controllerLog := c.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
-
+	
 	controllerLog.Info("new client connected")
-
+	
 	for {
-		if h.idleTimeout > 0 {
-			if err := conn.SetDeadline(time.Now().Add(h.idleTimeout)); err != nil {
-				controllerLog.Error("failed to set deadline", slog.String("error", err.Error()))
-			}
-		}
-
-		lenBuf := make([]byte, 4)
-		_, err := io.ReadFull(conn, lenBuf)
+		err := setConnectionTimeout(controllerLog, conn, c.idleTimeout)
 		if err != nil {
-			if errors.Is(err, os.ErrDeadlineExceeded) {
-				controllerLog.Warn("timeout exceeded", slog.String("error", err.Error()))
-			} else {
-				controllerLog.Error("something wrong with length prefix", slog.String("error", err.Error()))
-			}
 			return
 		}
-
-		length := binary.BigEndian.Uint32(lenBuf)
-		if length == 0 {
-			controllerLog.Info("request body is empty")
-			continue
-		}
-		if length > 4<<20 { // 4 MB
-			controllerLog.Info("request body is too long")
-			continue
-		}
-
-		message := make([]byte, length)
-		_, err = io.ReadFull(conn, message)
+		
+		length, err := readLengthPrefix(controllerLog, conn)
 		if err != nil {
-			controllerLog.Error("something wrong with payload", slog.String("error", err.Error()))
 			return
 		}
-
-		var req protobuf.Request
-		if err = proto.Unmarshal(message, &req); err != nil {
-			controllerLog.Error("bad unmarshal message", slog.String("error", err.Error()))
+		
+		message, err := readByteMessage(controllerLog, conn, length)
+		if err != nil {
+			return
+		}
+		
+		req, err := byteToProtobufRequest(controllerLog, message)
+		if err != nil {
 			continue
 		}
-
-		handler, exists := h.customHandlers[req.Type]
-		if !exists {
-			controllerLog.Error("custom handler not found", slog.String("type", req.Type))
-			return
-		}
-		handler.Handle(conn, &req)
+		
+		handleConnection(controllerLog, conn, req, c.handlers)
 	}
 }
 
-func SetConnectionTimeout(log *slog.Logger, conn net.Conn, timeout time.Duration) {
-	if timeout > 0 {
+func setConnectionTimeout(log *slog.Logger, conn net.Conn, timeout time.Duration) error {
+	if timeout >= 0 {
 		if err := conn.SetDeadline(time.Now().Add(timeout)); err != nil {
-			log.Error("failed to set deadline", slog.String("error", err.Error()))
+			log.Error("failed to set timeout", slog.String("error", err.Error()))
+			return custom_error.ErrFunc
 		}
+		
+		return nil
 	}
+	
+	log.Error("timeout is empty")
+	return custom_error.ErrFunc
+}
+
+func readLengthPrefix(log *slog.Logger, conn net.Conn) (uint32, error) {
+	const maxMessageLength = 4 << 20 // 4 MB
+	
+	lenBuf := make([]byte, 4)
+	_, err := io.ReadFull(conn, lenBuf)
+	if err != nil {
+		if errors.Is(err, os.ErrDeadlineExceeded) {
+			log.Warn("timeout exceeded", slog.String("error", err.Error()))
+			return 0, custom_error.ErrFunc
+		}
+		
+		log.Error("something wrong with length prefix", slog.String("error", err.Error()))
+		return 0, custom_error.ErrFunc
+	}
+	
+	length := binary.BigEndian.Uint32(lenBuf)
+	if length == 0 {
+		log.Info("request body is empty")
+		return 0, custom_error.ErrFunc
+	}
+	if length > maxMessageLength {
+		log.Info("request body is too long")
+		return 0, custom_error.ErrFunc
+	}
+	
+	return length, nil
+}
+
+func readByteMessage(log *slog.Logger, conn net.Conn, length uint32) ([]byte, error) {
+	message := make([]byte, length)
+	_, err := io.ReadFull(conn, message)
+	if err != nil {
+		log.Error("something wrong with payload", slog.String("error", err.Error()))
+		return nil, custom_error.ErrFunc
+	}
+	
+	return message, nil
+}
+
+func byteToProtobufRequest(log *slog.Logger, message []byte) (*protobuf.Request, error) {
+	var req protobuf.Request
+	if err := proto.Unmarshal(message, &req); err != nil {
+		log.Error("bad unmarshal message", slog.String("error", err.Error()))
+		return nil, custom_error.ErrFunc
+	}
+	
+	return &req, nil
+}
+
+func handleConnection(log *slog.Logger, conn net.Conn, req *protobuf.Request, handlers map[string]Handler) {
+	handler, exists := handlers[req.Type]
+	if !exists {
+		log.Error("handler not found", slog.String("type", req.Type))
+		return
+	}
+	handler.Handle(conn, req)
 }
 
 /*
