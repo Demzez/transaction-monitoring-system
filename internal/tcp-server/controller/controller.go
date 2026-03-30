@@ -10,17 +10,17 @@ import (
 	"sync"
 	"time"
 	custom_error "transaction-monitoring-system/internal/lib/custom-error"
-	"transaction-monitoring-system/protobuf"
+	"transaction-monitoring-system/protoStruct"
 	
 	"google.golang.org/protobuf/proto"
 )
 
 type Handler interface {
-	Handle(conn net.Conn, req *protobuf.Request)
+	Handle(conn net.Conn, req *protoStruct.Request)
 	Type() string
 }
 
-type Controller struct { // TODO: передать сюда конфиг для проверки токена && refactoring!!!
+type Controller struct { // TODO: передать сюда конфиг для проверки токена
 	log         *slog.Logger
 	handlers    map[string]Handler
 	idleTimeout time.Duration
@@ -81,7 +81,8 @@ func (c *Controller) Process(conn net.Conn, wg *sync.WaitGroup) {
 
 func setConnectionTimeout(log *slog.Logger, conn net.Conn, timeout time.Duration) error {
 	if timeout >= 0 {
-		if err := conn.SetDeadline(time.Now().Add(timeout)); err != nil {
+		err := conn.SetDeadline(time.Now().Add(timeout))
+		if err != nil {
 			log.Error("failed to set timeout", slog.String("error", err.Error()))
 			return custom_error.ErrFunc
 		}
@@ -97,10 +98,16 @@ func readLengthPrefix(log *slog.Logger, conn net.Conn) (uint32, error) {
 	const maxMessageLength = 4 << 20 // 4 MB
 	
 	lenBuf := make([]byte, 4)
+	
 	_, err := io.ReadFull(conn, lenBuf)
 	if err != nil {
 		if errors.Is(err, os.ErrDeadlineExceeded) {
 			log.Warn("timeout exceeded", slog.String("error", err.Error()))
+			return 0, custom_error.ErrFunc
+		}
+		
+		if errors.Is(err, io.EOF) {
+			log.Warn("client disconnected", slog.String("error", err.Error()))
 			return 0, custom_error.ErrFunc
 		}
 		
@@ -110,11 +117,11 @@ func readLengthPrefix(log *slog.Logger, conn net.Conn) (uint32, error) {
 	
 	length := binary.BigEndian.Uint32(lenBuf)
 	if length == 0 {
-		log.Info("request body is empty")
+		log.Warn("request body is empty")
 		return 0, custom_error.ErrFunc
 	}
 	if length > maxMessageLength {
-		log.Info("request body is too long")
+		log.Warn("request body is too long")
 		return 0, custom_error.ErrFunc
 	}
 	
@@ -123,6 +130,7 @@ func readLengthPrefix(log *slog.Logger, conn net.Conn) (uint32, error) {
 
 func readByteMessage(log *slog.Logger, conn net.Conn, length uint32) ([]byte, error) {
 	message := make([]byte, length)
+	
 	_, err := io.ReadFull(conn, message)
 	if err != nil {
 		log.Error("something wrong with payload", slog.String("error", err.Error()))
@@ -132,9 +140,11 @@ func readByteMessage(log *slog.Logger, conn net.Conn, length uint32) ([]byte, er
 	return message, nil
 }
 
-func byteToProtobufRequest(log *slog.Logger, message []byte) (*protobuf.Request, error) {
-	var req protobuf.Request
-	if err := proto.Unmarshal(message, &req); err != nil {
+func byteToProtobufRequest(log *slog.Logger, message []byte) (*protoStruct.Request, error) {
+	var req protoStruct.Request
+	
+	err := proto.Unmarshal(message, &req)
+	if err != nil {
 		log.Error("bad unmarshal message", slog.String("error", err.Error()))
 		return nil, custom_error.ErrFunc
 	}
@@ -142,7 +152,7 @@ func byteToProtobufRequest(log *slog.Logger, message []byte) (*protobuf.Request,
 	return &req, nil
 }
 
-func handleConnection(log *slog.Logger, conn net.Conn, req *protobuf.Request, handlers map[string]Handler) {
+func handleConnection(log *slog.Logger, conn net.Conn, req *protoStruct.Request, handlers map[string]Handler) {
 	handler, exists := handlers[req.Type]
 	if !exists {
 		log.Error("handler not found", slog.String("type", req.Type))

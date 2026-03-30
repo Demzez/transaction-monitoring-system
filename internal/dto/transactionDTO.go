@@ -2,7 +2,7 @@ package dto
 
 import (
 	"time"
-	"transaction-monitoring-system/protobuf"
+	"transaction-monitoring-system/protoStruct"
 )
 
 type TransactionDTO struct {
@@ -15,12 +15,12 @@ type TransactionDTO struct {
 	UpdatedAt   time.Time
 }
 
-func (t *TransactionDTO) DTOToProto() *protobuf.RespTransaction {
+func (t *TransactionDTO) DTOToProto() *protoStruct.RespTransaction {
 	if t == nil {
 		return nil
 	}
 
-	return &protobuf.RespTransaction{
+	return &protoStruct.RespTransaction{
 		Hash:        t.Hash,
 		Source:      t.Source,
 		Description: t.Description,

@@ -3,13 +3,15 @@ package handler
 import (
 	"log/slog"
 	"net"
-	"transaction-monitoring-system/internal/dto"
+	"time"
 	"transaction-monitoring-system/internal/tcp-server/writers"
-	"transaction-monitoring-system/protobuf"
+	"transaction-monitoring-system/protoStruct"
+
+	"google.golang.org/protobuf/proto"
 )
 
 type Registrator interface {
-	Register(dto dto.UserDTO) error
+	Register(login string, password string, createdAt time.Time) error
 }
 
 type RegistrationHandler struct {
@@ -26,7 +28,7 @@ func NewRegistrationHandler(log *slog.Logger, db Registrator, wr writers.WrInter
 	}
 }
 
-func (h *RegistrationHandler) Handle(conn net.Conn, req *protobuf.Request) {
+func (h *RegistrationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 
 	const op = "internal.tcp-server.handler.registration.Handle"
 
@@ -35,7 +37,28 @@ func (h *RegistrationHandler) Handle(conn net.Conn, req *protobuf.Request) {
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	handlerLog.Info("")
+	var pd protoStruct.ReqRegistration
+	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
+		handlerLog.Error("bad unmarshal payload", slog.String("error", err.Error()))
+		if err = h.wr.WriteError(conn, "bad request"); err != nil {
+			handlerLog.Error("failed to response with error", slog.String("error", err.Error()))
+		}
+	}
+
+	err := h.db.Register(pd.Login, pd.Password, time.Now())
+	if err != nil {
+		handlerLog.Error("failed to register", slog.String("error", err.Error()))
+		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
+			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
+		}
+		return
+	}
+
+	if err = h.wr.WriteResponse(conn, make([]byte, 0)); err != nil {
+		handlerLog.Error("failed to response", slog.String("error", err.Error()))
+	}
+
+	handlerLog.Info("registration succeed")
 }
 
 func (h *RegistrationHandler) Type() string {

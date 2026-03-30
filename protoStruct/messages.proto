@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package messages;
 
-option go_package = "./protobuf";
+option go_package = "./protoStruct";
 
 // Общий запрос от клиента
 message Request {
@@ -40,14 +40,16 @@ message RespTransactionList{
 
 // Структуры пользователей
 message ReqRegistration {
-  string newToken = 1;
+  string login = 1;
+  string password = 2;
 }
 message RespRegistration {
-
+ int64 user_id = 1;
 }
 message ReqAuthentication {
-  string newToken = 1;
+  string login = 1;
+  string password = 2;
 }
 message RespAuthentication {
-
+  string newToken = 1;
 }

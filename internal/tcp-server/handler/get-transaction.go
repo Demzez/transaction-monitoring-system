@@ -5,7 +5,7 @@ import (
 	"net"
 	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/tcp-server/writers"
-	"transaction-monitoring-system/protobuf"
+	"transaction-monitoring-system/protoStruct"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -28,7 +28,7 @@ func NewGetTransactionHandler(log *slog.Logger, db TransactionGetter, wr writers
 	}
 }
 
-func (h *GetTransactionHandler) Handle(conn net.Conn, req *protobuf.Request) {
+func (h *GetTransactionHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 
 	const op = "internal.tcp-server.handler.get-transaction.Process"
 
@@ -37,7 +37,7 @@ func (h *GetTransactionHandler) Handle(conn net.Conn, req *protobuf.Request) {
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	var pd protobuf.ReqTransaction
+	var pd protoStruct.ReqTransaction
 	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
 		handlerLog.Error("bad unmarshal payload", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "bad request"); err != nil {

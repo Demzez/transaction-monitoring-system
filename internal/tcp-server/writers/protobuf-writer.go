@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
-	"transaction-monitoring-system/protobuf"
+	"transaction-monitoring-system/protoStruct"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -13,7 +13,7 @@ type ProtobufWriter struct{}
 
 func (h *ProtobufWriter) WriteResponse(conn net.Conn, payload []byte) error {
 	const op = "internal.tcp-server.writers.WriteResponse"
-	resp := &protobuf.Response{
+	resp := &protoStruct.Response{
 		Ok:     true,
 		Result: payload,
 	}
@@ -28,7 +28,7 @@ func (h *ProtobufWriter) WriteResponse(conn net.Conn, payload []byte) error {
 func (h *ProtobufWriter) WriteError(conn net.Conn, msg string) error {
 	const op = "internal.tcp-server.writers.WriteError"
 
-	resp := &protobuf.Response{
+	resp := &protoStruct.Response{
 		Ok:    false,
 		Error: msg,
 	}
