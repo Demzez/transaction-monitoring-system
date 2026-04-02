@@ -13,7 +13,7 @@ message Request {
 // Общий ответ от сервера
 message Response {
   bool   ok         = 1;
-  bytes  result     = 2;          // Any или конкретный тип
+  bytes  result     = 2;         
   string error      = 3;
 }
 
@@ -32,10 +32,10 @@ message RespTransaction {
   int64 updated_at = 7;
 }
 message ReqTransactionList {
-  repeated ReqTransaction transactions = 1;
+  // empty slice of byte
 }
 message RespTransactionList{
-  
+  repeated RespTransaction transactions = 1;
 }
 
 // Структуры пользователей

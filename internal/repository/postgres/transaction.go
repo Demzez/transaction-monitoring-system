@@ -48,6 +48,12 @@ func (r *Repository) GetTransaction(transactionId int64) (dto.TransactionDTO, er
 	return transaction, nil
 }
 
+func (r *Repository) GetTransactions() ([]dto.TransactionDTO, error) { // TODO: делать метод для достования транзакций из бд
+	const op = "internal.repository.postgres.transaction.GetTransactions"
+
+	return nil, nil
+}
+
 func (r *Repository) DeleteTransaction(transactionHash string) error {
 	const op = "internal.repository.postgres.transaction.DeleteTransaction"
 

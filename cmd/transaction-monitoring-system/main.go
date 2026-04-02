@@ -107,11 +107,11 @@ func initHttpServer(sigCtx context.Context, cfg *config.Config, log *slog.Logger
 }
 
 func initTCPServer(sigCtx context.Context, cfg *config.Config, log *slog.Logger, repository *postgres.Repository) error {
-	wr := &writers.ProtobufWriter{} // TODO: specific responser in main? Ok?
-	newController := controller.NewController(log, cfg.TCPServer.IdleTimeout,
+	wr := &writers.ProtobufWriter{}
+	newController := controller.NewController(log, cfg.TCPServer.IdleTimeout, cfg.JWT.Secret,
 		handler.NewRegistrationHandler(log, repository, wr),
 		handler.NewAuthenticationHandler(log, repository, wr, cfg.JWT.Secret, cfg.JWT.ExpiryIn),
-		handler.NewGetTransactionHandler(log, repository, wr),
+		handler.NewGetTransactionsHandler(log, repository, wr),
 	)
 
 	listener, err := net.Listen("tcp", cfg.TCPServer.Address)

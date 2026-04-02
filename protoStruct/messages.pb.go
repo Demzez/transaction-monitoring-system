@@ -86,7 +86,7 @@ func (x *Request) GetToken() string {
 type Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ok            bool                   `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
-	Result        []byte                 `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"` // Any или конкретный тип
+	Result        []byte                 `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"`
 	Error         string                 `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -282,7 +282,6 @@ func (x *RespTransaction) GetUpdatedAt() int64 {
 
 type ReqTransactionList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Transactions  []*ReqTransaction      `protobuf:"bytes,1,rep,name=transactions,proto3" json:"transactions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -317,15 +316,9 @@ func (*ReqTransactionList) Descriptor() ([]byte, []int) {
 	return file_protoStruct_messages_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ReqTransactionList) GetTransactions() []*ReqTransaction {
-	if x != nil {
-		return x.Transactions
-	}
-	return nil
-}
-
 type RespTransactionList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Transactions  []*RespTransaction     `protobuf:"bytes,1,rep,name=transactions,proto3" json:"transactions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -358,6 +351,13 @@ func (x *RespTransactionList) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RespTransactionList.ProtoReflect.Descriptor instead.
 func (*RespTransactionList) Descriptor() ([]byte, []int) {
 	return file_protoStruct_messages_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *RespTransactionList) GetTransactions() []*RespTransaction {
+	if x != nil {
+		return x.Transactions
+	}
+	return nil
 }
 
 // Структуры пользователей
@@ -577,10 +577,10 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\x03R\tupdatedAt\"R\n" +
-	"\x12ReqTransactionList\x12<\n" +
-	"\ftransactions\x18\x01 \x03(\v2\x18.messages.ReqTransactionR\ftransactions\"\x15\n" +
-	"\x13RespTransactionList\"C\n" +
+	"updated_at\x18\a \x01(\x03R\tupdatedAt\"\x14\n" +
+	"\x12ReqTransactionList\"T\n" +
+	"\x13RespTransactionList\x12=\n" +
+	"\ftransactions\x18\x01 \x03(\v2\x19.messages.RespTransactionR\ftransactions\"C\n" +
 	"\x0fReqRegistration\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"+\n" +
@@ -618,7 +618,7 @@ var file_protoStruct_messages_proto_goTypes = []any{
 	(*RespAuthentication)(nil),  // 9: messages.RespAuthentication
 }
 var file_protoStruct_messages_proto_depIdxs = []int32{
-	2, // 0: messages.ReqTransactionList.transactions:type_name -> messages.ReqTransaction
+	3, // 0: messages.RespTransactionList.transactions:type_name -> messages.RespTransaction
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
