@@ -4,20 +4,20 @@ package messages;
 
 option go_package = "./protoStruct";
 
-// Общий запрос от клиента
+// ------------------------------------------- Общий запрос от клиента
 message Request {
-  string type       = 1;          // "ping", "get_user", "auth", "subscribe" и т.д.
-  bytes  payload    = 2;          // сериализованные данные конкретного типа (Any или конкретное сообщение)
-  string token      = 3;          // JWT или другой токен
+  string type       = 1;          
+  bytes  payload    = 2;
+  string token      = 3;          
 }
-// Общий ответ от сервера
+// ------------------------------------------- Общий ответ от сервера
 message Response {
   bool   ok         = 1;
   bytes  result     = 2;         
   string error      = 3;
 }
 
-// Структуры транзакций
+// ------------------------------------------- Структуры транзакций
 message ReqTransaction {
   int64 transaction_id = 1;
 }
@@ -38,13 +38,13 @@ message RespTransactionList{
   repeated RespTransaction transactions = 1;
 }
 
-// Структуры пользователей
+// ------------------------------------------- Структуры пользователей
 message ReqRegistration {
   string login = 1;
   string password = 2;
 }
 message RespRegistration {
- int64 user_id = 1;
+ // empty slice of byte
 }
 message ReqAuthentication {
   string login = 1;

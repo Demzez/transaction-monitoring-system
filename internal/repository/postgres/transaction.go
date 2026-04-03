@@ -51,7 +51,34 @@ func (r *Repository) GetTransaction(transactionId int64) (dto.TransactionDTO, er
 func (r *Repository) GetTransactions() ([]dto.TransactionDTO, error) { // TODO: делать метод для достования транзакций из бд
 	const op = "internal.repository.postgres.transaction.GetTransactions"
 
-	return nil, nil
+	rows, err := r.db.Query(context.Background(),
+		`SELECT hash, source, description, type, status, created_at, updated_at FROM transaction`)
+	if err != nil {
+		return nil, fmt.Errorf("%s : %s", op, err)
+	}
+	defer rows.Close()
+
+	var transactions []dto.TransactionDTO
+	for rows.Next() {
+		var transaction dto.TransactionDTO
+		err = rows.Scan(
+			&transaction.Hash,
+			&transaction.Source,
+			&transaction.Description,
+			&transaction.Type,
+			&transaction.Status,
+			&transaction.CreatedAt,
+			&transaction.UpdatedAt)
+		if err != nil {
+			return nil, fmt.Errorf("%s : %s", op, err)
+		}
+		transactions = append(transactions, transaction)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s : %s", op, err)
+	}
+	return transactions, nil
 }
 
 func (r *Repository) DeleteTransaction(transactionHash string) error {

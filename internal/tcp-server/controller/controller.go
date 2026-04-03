@@ -75,7 +75,7 @@ func (c *Controller) Process(conn net.Conn, wg *sync.WaitGroup) {
 
 		req, err := byteToProtobufRequest(controllerLog, message)
 		if err != nil {
-			continue
+			return
 		}
 
 		ok := validateTokenJWT(controllerLog, req, c.jwtSecret)

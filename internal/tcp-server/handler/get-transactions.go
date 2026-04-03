@@ -1,4 +1,4 @@
-package handler //TODO: сделать хендлер для всех транзакций
+package handler
 
 import (
 	"log/slog"
@@ -30,30 +30,14 @@ func NewGetTransactionsHandler(log *slog.Logger, db TransactionsGetter, wr write
 
 func (h *GetTransactionsHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 
-	const op = "internal.tcp-server.handler.get-transaction.Process"
+	const op = "internal.tcp-server.handler.get-transaction.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	var pd protoStruct.ReqTransaction
-	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
-		handlerLog.Error("bad unmarshal payload", slog.String("error", err.Error()))
-		if err = h.wr.WriteError(conn, "bad request"); err != nil {
-			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
-		}
-		return
-	}
-	if pd.TransactionId == 0 {
-		handlerLog.Info("transaction_id is a required")
-		if err := h.wr.WriteError(conn, "transaction_id is a required"); err != nil {
-			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
-		}
-		return
-	}
-
-	transactionDTO, err := h.db.GetTransactions(pd.TransactionId)
+	transactionDTOs, err := h.db.GetTransactions()
 	if err != nil {
 		handlerLog.Error("failed to get transaction", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
@@ -62,7 +46,12 @@ func (h *GetTransactionsHandler) Handle(conn net.Conn, req *protoStruct.Request)
 		return
 	}
 
-	data, err := proto.Marshal(transactionDTO.DTOToProto())
+	var protoAnswer []*protoStruct.RespTransaction
+	for _, transaction := range transactionDTOs {
+		protoAnswer = append(protoAnswer, transaction.DTOToProto())
+	}
+
+	data, err := proto.Marshal(&protoStruct.RespTransactionList{Transactions: protoAnswer})
 	if err != nil {
 		handlerLog.Error("failed to marshal transaction", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {

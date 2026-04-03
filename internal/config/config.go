@@ -17,7 +17,7 @@ type Config struct {
 
 type JWT struct {
 	Secret   string        `yaml:"secret" env-required:"true" env:"JWT_SECRET"`
-	ExpiryIn time.Duration `yaml:"expiry_in"`
+	ExpiryIn time.Duration `yaml:"expiry_in" env-default:"1800s"`
 }
 
 type PostgresDB struct {

@@ -35,7 +35,7 @@ func NewAuthenticationHandler(log *slog.Logger, db Authenticator, wr writers.WrI
 
 func (h *AuthenticationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 
-	const op = "internal.tcp-server.handler.authentication.Process"
+	const op = "internal.tcp-server.handler.authentication.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),

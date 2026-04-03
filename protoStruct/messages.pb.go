@@ -21,12 +21,12 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Общий запрос от клиента
+// ------------------------------------------- Общий запрос от клиента
 type Request struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`       // "ping", "get_user", "auth", "subscribe" и т.д.
-	Payload       []byte                 `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"` // сериализованные данные конкретного типа (Any или конкретное сообщение)
-	Token         string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`     // JWT или другой токен
+	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Payload       []byte                 `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
+	Token         string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -82,7 +82,7 @@ func (x *Request) GetToken() string {
 	return ""
 }
 
-// Общий ответ от сервера
+// ------------------------------------------- Общий ответ от сервера
 type Response struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ok            bool                   `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
@@ -143,7 +143,7 @@ func (x *Response) GetError() string {
 	return ""
 }
 
-// Структуры транзакций
+// ------------------------------------------- Структуры транзакций
 type ReqTransaction struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
@@ -360,7 +360,7 @@ func (x *RespTransactionList) GetTransactions() []*RespTransaction {
 	return nil
 }
 
-// Структуры пользователей
+// ------------------------------------------- Структуры пользователей
 type ReqRegistration struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Login         string                 `protobuf:"bytes,1,opt,name=login,proto3" json:"login,omitempty"`
@@ -415,7 +415,6 @@ func (x *ReqRegistration) GetPassword() string {
 
 type RespRegistration struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -448,13 +447,6 @@ func (x *RespRegistration) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RespRegistration.ProtoReflect.Descriptor instead.
 func (*RespRegistration) Descriptor() ([]byte, []int) {
 	return file_protoStruct_messages_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *RespRegistration) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 type ReqAuthentication struct {
@@ -583,9 +575,8 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\ftransactions\x18\x01 \x03(\v2\x19.messages.RespTransactionR\ftransactions\"C\n" +
 	"\x0fReqRegistration\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"+\n" +
-	"\x10RespRegistration\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"E\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x12\n" +
+	"\x10RespRegistration\"E\n" +
 	"\x11ReqAuthentication\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"0\n" +
