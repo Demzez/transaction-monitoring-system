@@ -1,4 +1,4 @@
-package handler
+package all
 
 import (
 	"log/slog"
@@ -35,7 +35,7 @@ func NewAuthenticationHandler(log *slog.Logger, db Authenticator, wr writers.WrI
 
 func (h *AuthenticationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 
-	const op = "internal.tcp-server.handler.authentication.Handle"
+	const op = "internal.tcp-server.handler.all.authentication.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),
@@ -48,6 +48,7 @@ func (h *AuthenticationHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 		if err = h.wr.WriteError(conn, "bad request"); err != nil {
 			handlerLog.Error("failed to response with error", slog.String("error", err.Error()))
 		}
+		return
 	}
 
 	err := h.db.Authenticate(pd.Login, pd.Password)

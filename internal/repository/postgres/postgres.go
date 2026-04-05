@@ -37,11 +37,19 @@ func New(cfg config.PostgresDB) (*Repository, error) {
         created_at TIMESTAMPTZ NOT NULL,
         updated_at TIMESTAMPTZ);
 		
+		CREATE TABLE IF NOT EXISTS "role" (
+		    role_id SERIAL PRIMARY KEY,
+		    name TEXT NOT NULL UNIQUE);
+
 		CREATE TABLE IF NOT EXISTS "user" (
 		user_id SERIAL PRIMARY KEY,
 		login TEXT NOT NULL UNIQUE,
 		password TEXT NOT NULL,
-		created_at TIMESTAMPTZ NOT NULL);
+		role_id INT NOT NULL,
+		created_at TIMESTAMPTZ NOT NULL,
+		CONSTRAINT user_role_id_fkey
+		  FOREIGN KEY (role_id)
+		  REFERENCES role(role_id));
 `)
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)

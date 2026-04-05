@@ -16,7 +16,7 @@ import (
 	"transaction-monitoring-system/internal/lib/logger/slog/slogpretty"
 	"transaction-monitoring-system/internal/repository/postgres"
 	"transaction-monitoring-system/internal/tcp-server/controller"
-	"transaction-monitoring-system/internal/tcp-server/handler"
+	"transaction-monitoring-system/internal/tcp-server/handler/all"
 	"transaction-monitoring-system/internal/tcp-server/writers"
 )
 
@@ -109,9 +109,9 @@ func initHttpServer(sigCtx context.Context, cfg *config.Config, log *slog.Logger
 func initTCPServer(sigCtx context.Context, cfg *config.Config, log *slog.Logger, repository *postgres.Repository) error {
 	wr := &writers.ProtobufWriter{}
 	newController := controller.NewController(log, cfg.TCPServer.IdleTimeout, cfg.JWT.Secret,
-		handler.NewRegistrationHandler(log, repository, wr),
-		handler.NewAuthenticationHandler(log, repository, wr, cfg.JWT.Secret, cfg.JWT.ExpiryIn),
-		handler.NewGetTransactionsHandler(log, repository, wr),
+		all.NewRegistrationHandler(log, repository, wr),
+		all.NewAuthenticationHandler(log, repository, wr, cfg.JWT.Secret, cfg.JWT.ExpiryIn),
+		all.NewGetTransactionsHandler(log, repository, wr),
 	)
 
 	listener, err := net.Listen("tcp", cfg.TCPServer.Address)

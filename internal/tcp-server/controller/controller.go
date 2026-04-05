@@ -160,15 +160,6 @@ func byteToProtobufRequest(log *slog.Logger, message []byte) (*protoStruct.Reque
 	return &req, nil
 }
 
-func handleConnection(log *slog.Logger, conn net.Conn, req *protoStruct.Request, handlers map[string]Handler) {
-	handler, exists := handlers[req.Type]
-	if !exists {
-		log.Error("handler not found", slog.String("type", req.Type))
-		return
-	}
-	handler.Handle(conn, req)
-}
-
 func validateTokenJWT(log *slog.Logger, req *protoStruct.Request, jwtSecret string) bool {
 	if req.Type == "authentication" || req.Type == "registration" {
 		return true
@@ -178,11 +169,20 @@ func validateTokenJWT(log *slog.Logger, req *protoStruct.Request, jwtSecret stri
 		log.Error("missing token")
 		return false
 	}
-	_, err := jwt.ValidateToken(req.Token, jwtSecret) //TODO: проблема с token is expired
+	_, err := jwt.ValidateToken(req.Token, jwtSecret)
 	if err != nil {
 		log.Error("invalid token", slog.String("error", err.Error()))
 		return false
 	}
 
 	return true
+}
+
+func handleConnection(log *slog.Logger, conn net.Conn, req *protoStruct.Request, handlers map[string]Handler) {
+	handler, exists := handlers[req.Type]
+	if !exists {
+		log.Error("handler not found", slog.String("type", req.Type))
+		return
+	}
+	handler.Handle(conn, req)
 }

@@ -1,9 +1,10 @@
-package handler
+package all
 
 import (
 	"log/slog"
 	"net"
 	"time"
+	"transaction-monitoring-system/internal/repository/postgres"
 	"transaction-monitoring-system/internal/tcp-server/writers"
 	"transaction-monitoring-system/protoStruct"
 
@@ -11,7 +12,7 @@ import (
 )
 
 type Registrator interface {
-	Register(login string, password string, createdAt time.Time) error
+	Register(login string, password string, role int, createdAt time.Time) error
 }
 
 type RegistrationHandler struct {
@@ -30,7 +31,7 @@ func NewRegistrationHandler(log *slog.Logger, db Registrator, wr writers.WrInter
 
 func (h *RegistrationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 
-	const op = "internal.tcp-server.handler.registration.Handle"
+	const op = "internal.tcp-server.handler.all.registration.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),
@@ -45,7 +46,7 @@ func (h *RegistrationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 		}
 	}
 
-	err := h.db.Register(pd.Login, pd.Password, time.Now())
+	err := h.db.Register(pd.Login, pd.Password, postgres.ROLE_MANAGER, time.Now())
 	if err != nil {
 		handlerLog.Error("failed to register", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {

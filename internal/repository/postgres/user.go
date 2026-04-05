@@ -12,7 +12,13 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func (r *Repository) Register(login string, password string, createdAt time.Time) error {
+const (
+	ROLE_MANAGER          = 1
+	ROLE_FRAUD_SPECIALIST = 2
+	ROLE_ADMIN            = 3
+)
+
+func (r *Repository) Register(login string, password string, role int, createdAt time.Time) error {
 
 	const op = "internal.repository.postgres.user.Register"
 
@@ -22,8 +28,8 @@ func (r *Repository) Register(login string, password string, createdAt time.Time
 	}
 
 	_, err = r.db.Exec(context.Background(),
-		`INSERT INTO "user" (login, password, created_at) VALUES ($1, $2, $3)`,
-		login, hashPassword, createdAt)
+		`INSERT INTO "user" (login, password, role_id, created_at) VALUES ($1, $2, $3, $4)`,
+		login, hashPassword, role, createdAt)
 	if err != nil {
 		var pgErr *pgconn.PgError // Код 23505 - unique_violation
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {

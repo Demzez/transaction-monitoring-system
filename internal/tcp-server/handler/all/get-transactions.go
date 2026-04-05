@@ -1,4 +1,4 @@
-package handler
+package all
 
 import (
 	"log/slog"
@@ -30,7 +30,7 @@ func NewGetTransactionsHandler(log *slog.Logger, db TransactionsGetter, wr write
 
 func (h *GetTransactionsHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 
-	const op = "internal.tcp-server.handler.get-transaction.Handle"
+	const op = "internal.tcp-server.handler.all.get-transactions.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),
