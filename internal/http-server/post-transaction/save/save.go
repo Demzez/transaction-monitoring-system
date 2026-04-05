@@ -12,11 +12,11 @@ import (
 )
 
 type Request struct {
-	Hash        string `json:"hash" validate:"required"`
-	Source      string `json:"source" validate:"required"`
-	Description string `json:"description" validate:"required"`
-	Type        string `json:"type" validate:"required"`
-	Status      string `json:"status" validate:"required"`
+	Hash      string `json:"hash" validate:"required"`
+	Source    string `json:"source" validate:"required"`
+	Amount    int64  `json:"amount" validate:"required"`
+	Direction string `json:"direction" validate:"required"`
+	Status    string `json:"status" validate:"required"`
 }
 
 type TransactionSaver interface {
@@ -52,12 +52,12 @@ func New(log *slog.Logger, saver TransactionSaver) http.HandlerFunc {
 		}
 
 		err = saver.SaveTransaction(dto.TransactionDTO{
-			Hash:        req.Hash,
-			Source:      req.Source,
-			Description: req.Description,
-			Type:        req.Type,
-			Status:      req.Status,
-			CreatedAt:   time.Now(),
+			Hash:      req.Hash,
+			Source:    req.Source,
+			Amount:    req.Amount,
+			Direction: req.Direction,
+			Status:    req.Status,
+			CreatedAt: time.Now(),
 		})
 		if err != nil {
 			// TODO: add check for unique violation error, or doing something other

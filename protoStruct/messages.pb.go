@@ -192,8 +192,8 @@ type RespTransaction struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Hash          string                 `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
 	Source        string                 `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`
-	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	Direction     string                 `protobuf:"bytes,4,opt,name=direction,proto3" json:"direction,omitempty"`
 	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
 	CreatedAt     int64                  `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     int64                  `protobuf:"varint,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -245,16 +245,16 @@ func (x *RespTransaction) GetSource() string {
 	return ""
 }
 
-func (x *RespTransaction) GetDescription() string {
+func (x *RespTransaction) GetAmount() int64 {
 	if x != nil {
-		return x.Description
+		return x.Amount
 	}
-	return ""
+	return 0
 }
 
-func (x *RespTransaction) GetType() string {
+func (x *RespTransaction) GetDirection() string {
 	if x != nil {
-		return x.Type
+		return x.Direction
 	}
 	return ""
 }
@@ -562,9 +562,9 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\"\xc9\x01\n" +
 	"\x0fRespTransaction\x12\x12\n" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\x12\x16\n" +
-	"\x06source\x18\x02 \x01(\tR\x06source\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x12\n" +
-	"\x04type\x18\x04 \x01(\tR\x04type\x12\x16\n" +
+	"\x06source\x18\x02 \x01(\tR\x06source\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x1c\n" +
+	"\tdirection\x18\x04 \x01(\tR\tdirection\x12\x16\n" +
 	"\x06status\x18\x05 \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1d\n" +

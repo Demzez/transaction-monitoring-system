@@ -24,8 +24,8 @@ message ReqTransaction {
 message RespTransaction {
   string hash         = 1;
   string source       = 2;
-  string description  = 3;
-  string type         = 4;
+  int64 amount  = 3;
+  string direction         = 4;
   string status       = 5;
 
   int64 created_at = 6;

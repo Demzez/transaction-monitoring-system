@@ -6,13 +6,13 @@ import (
 )
 
 type TransactionDTO struct {
-	Hash        string
-	Source      string
-	Description string
-	Type        string
-	Status      string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	Hash      string
+	Source    string
+	Amount    int64
+	Direction string
+	Status    string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func (t *TransactionDTO) DTOToProto() *protoStruct.RespTransaction {
@@ -21,12 +21,12 @@ func (t *TransactionDTO) DTOToProto() *protoStruct.RespTransaction {
 	}
 
 	return &protoStruct.RespTransaction{
-		Hash:        t.Hash,
-		Source:      t.Source,
-		Description: t.Description,
-		Type:        t.Type,
-		Status:      t.Status,
-		CreatedAt:   t.CreatedAt.Unix(),
-		UpdatedAt:   t.UpdatedAt.Unix(),
+		Hash:      t.Hash,
+		Source:    t.Source,
+		Amount:    t.Amount,
+		Direction: t.Direction,
+		Status:    t.Status,
+		CreatedAt: t.CreatedAt.Unix(),
+		UpdatedAt: t.UpdatedAt.Unix(),
 	}
 }
