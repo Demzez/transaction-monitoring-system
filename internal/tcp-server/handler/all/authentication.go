@@ -12,7 +12,7 @@ import (
 )
 
 type Authenticator interface {
-	Authenticate(username, password string) error
+	Authenticate(username, password string) (int64, error)
 }
 
 type AuthenticationHandler struct {
@@ -51,7 +51,7 @@ func (h *AuthenticationHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 		return
 	}
 
-	err := h.db.Authenticate(pd.Login, pd.Password)
+	roleID, err := h.db.Authenticate(pd.Login, pd.Password)
 	if err != nil {
 		handlerLog.Error("failed to authenticate", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "incorrect login or password"); err != nil {
@@ -63,6 +63,7 @@ func (h *AuthenticationHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 	newToken, _ := jwt.GenerateToken(h.jwtSecret, h.tokenLifetime)
 	protoAnswer := protoStruct.RespAuthentication{
 		NewToken: newToken,
+		RoleId:   roleID,
 	}
 
 	data, err := proto.Marshal(&protoAnswer)

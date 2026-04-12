@@ -360,6 +360,199 @@ func (x *RespTransactionList) GetTransactions() []*RespTransaction {
 	return nil
 }
 
+// ------------------------------------------- Структуры сомнительных транзакций
+type ReqDoubtfulTransaction struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AssessmentId  int64                  `protobuf:"varint,1,opt,name=assessment_id,json=assessmentId,proto3" json:"assessment_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReqDoubtfulTransaction) Reset() {
+	*x = ReqDoubtfulTransaction{}
+	mi := &file_protoStruct_messages_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReqDoubtfulTransaction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReqDoubtfulTransaction) ProtoMessage() {}
+
+func (x *ReqDoubtfulTransaction) ProtoReflect() protoreflect.Message {
+	mi := &file_protoStruct_messages_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReqDoubtfulTransaction.ProtoReflect.Descriptor instead.
+func (*ReqDoubtfulTransaction) Descriptor() ([]byte, []int) {
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ReqDoubtfulTransaction) GetAssessmentId() int64 {
+	if x != nil {
+		return x.AssessmentId
+	}
+	return 0
+}
+
+type RespDoubtfulTransaction struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	RiskScore     int64                  `protobuf:"varint,2,opt,name=risk_score,json=riskScore,proto3" json:"risk_score,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Decision      string                 `protobuf:"bytes,4,opt,name=decision,proto3" json:"decision,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RespDoubtfulTransaction) Reset() {
+	*x = RespDoubtfulTransaction{}
+	mi := &file_protoStruct_messages_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RespDoubtfulTransaction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RespDoubtfulTransaction) ProtoMessage() {}
+
+func (x *RespDoubtfulTransaction) ProtoReflect() protoreflect.Message {
+	mi := &file_protoStruct_messages_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RespDoubtfulTransaction.ProtoReflect.Descriptor instead.
+func (*RespDoubtfulTransaction) Descriptor() ([]byte, []int) {
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *RespDoubtfulTransaction) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
+}
+
+func (x *RespDoubtfulTransaction) GetRiskScore() int64 {
+	if x != nil {
+		return x.RiskScore
+	}
+	return 0
+}
+
+func (x *RespDoubtfulTransaction) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *RespDoubtfulTransaction) GetDecision() string {
+	if x != nil {
+		return x.Decision
+	}
+	return ""
+}
+
+type ReqDoubtfulTransactionList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReqDoubtfulTransactionList) Reset() {
+	*x = ReqDoubtfulTransactionList{}
+	mi := &file_protoStruct_messages_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReqDoubtfulTransactionList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReqDoubtfulTransactionList) ProtoMessage() {}
+
+func (x *ReqDoubtfulTransactionList) ProtoReflect() protoreflect.Message {
+	mi := &file_protoStruct_messages_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReqDoubtfulTransactionList.ProtoReflect.Descriptor instead.
+func (*ReqDoubtfulTransactionList) Descriptor() ([]byte, []int) {
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{8}
+}
+
+type RespDoubtfulTransactionList struct {
+	state                protoimpl.MessageState     `protogen:"open.v1"`
+	DoubtfulTransactions []*RespDoubtfulTransaction `protobuf:"bytes,1,rep,name=doubtful_transactions,json=doubtfulTransactions,proto3" json:"doubtful_transactions,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *RespDoubtfulTransactionList) Reset() {
+	*x = RespDoubtfulTransactionList{}
+	mi := &file_protoStruct_messages_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RespDoubtfulTransactionList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RespDoubtfulTransactionList) ProtoMessage() {}
+
+func (x *RespDoubtfulTransactionList) ProtoReflect() protoreflect.Message {
+	mi := &file_protoStruct_messages_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RespDoubtfulTransactionList.ProtoReflect.Descriptor instead.
+func (*RespDoubtfulTransactionList) Descriptor() ([]byte, []int) {
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *RespDoubtfulTransactionList) GetDoubtfulTransactions() []*RespDoubtfulTransaction {
+	if x != nil {
+		return x.DoubtfulTransactions
+	}
+	return nil
+}
+
 // ------------------------------------------- Структуры пользователей
 type ReqRegistration struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -371,7 +564,7 @@ type ReqRegistration struct {
 
 func (x *ReqRegistration) Reset() {
 	*x = ReqRegistration{}
-	mi := &file_protoStruct_messages_proto_msgTypes[6]
+	mi := &file_protoStruct_messages_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -383,7 +576,7 @@ func (x *ReqRegistration) String() string {
 func (*ReqRegistration) ProtoMessage() {}
 
 func (x *ReqRegistration) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[6]
+	mi := &file_protoStruct_messages_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -396,7 +589,7 @@ func (x *ReqRegistration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqRegistration.ProtoReflect.Descriptor instead.
 func (*ReqRegistration) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{6}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ReqRegistration) GetLogin() string {
@@ -421,7 +614,7 @@ type RespRegistration struct {
 
 func (x *RespRegistration) Reset() {
 	*x = RespRegistration{}
-	mi := &file_protoStruct_messages_proto_msgTypes[7]
+	mi := &file_protoStruct_messages_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -433,7 +626,7 @@ func (x *RespRegistration) String() string {
 func (*RespRegistration) ProtoMessage() {}
 
 func (x *RespRegistration) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[7]
+	mi := &file_protoStruct_messages_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -446,7 +639,7 @@ func (x *RespRegistration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespRegistration.ProtoReflect.Descriptor instead.
 func (*RespRegistration) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{7}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{11}
 }
 
 type ReqAuthentication struct {
@@ -459,7 +652,7 @@ type ReqAuthentication struct {
 
 func (x *ReqAuthentication) Reset() {
 	*x = ReqAuthentication{}
-	mi := &file_protoStruct_messages_proto_msgTypes[8]
+	mi := &file_protoStruct_messages_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -471,7 +664,7 @@ func (x *ReqAuthentication) String() string {
 func (*ReqAuthentication) ProtoMessage() {}
 
 func (x *ReqAuthentication) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[8]
+	mi := &file_protoStruct_messages_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -484,7 +677,7 @@ func (x *ReqAuthentication) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqAuthentication.ProtoReflect.Descriptor instead.
 func (*ReqAuthentication) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{8}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ReqAuthentication) GetLogin() string {
@@ -504,13 +697,14 @@ func (x *ReqAuthentication) GetPassword() string {
 type RespAuthentication struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	NewToken      string                 `protobuf:"bytes,1,opt,name=newToken,proto3" json:"newToken,omitempty"`
+	RoleId        int64                  `protobuf:"varint,2,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RespAuthentication) Reset() {
 	*x = RespAuthentication{}
-	mi := &file_protoStruct_messages_proto_msgTypes[9]
+	mi := &file_protoStruct_messages_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -522,7 +716,7 @@ func (x *RespAuthentication) String() string {
 func (*RespAuthentication) ProtoMessage() {}
 
 func (x *RespAuthentication) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[9]
+	mi := &file_protoStruct_messages_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -535,7 +729,7 @@ func (x *RespAuthentication) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespAuthentication.ProtoReflect.Descriptor instead.
 func (*RespAuthentication) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{9}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *RespAuthentication) GetNewToken() string {
@@ -543,6 +737,13 @@ func (x *RespAuthentication) GetNewToken() string {
 		return x.NewToken
 	}
 	return ""
+}
+
+func (x *RespAuthentication) GetRoleId() int64 {
+	if x != nil {
+		return x.RoleId
+	}
+	return 0
 }
 
 var File_protoStruct_messages_proto protoreflect.FileDescriptor
@@ -572,16 +773,28 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"updated_at\x18\a \x01(\x03R\tupdatedAt\"\x14\n" +
 	"\x12ReqTransactionList\"T\n" +
 	"\x13RespTransactionList\x12=\n" +
-	"\ftransactions\x18\x01 \x03(\v2\x19.messages.RespTransactionR\ftransactions\"C\n" +
+	"\ftransactions\x18\x01 \x03(\v2\x19.messages.RespTransactionR\ftransactions\"=\n" +
+	"\x16ReqDoubtfulTransaction\x12#\n" +
+	"\rassessment_id\x18\x01 \x01(\x03R\fassessmentId\"\x9d\x01\n" +
+	"\x17RespDoubtfulTransaction\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\x12\x1d\n" +
+	"\n" +
+	"risk_score\x18\x02 \x01(\x03R\triskScore\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1a\n" +
+	"\bdecision\x18\x04 \x01(\tR\bdecision\"\x1c\n" +
+	"\x1aReqDoubtfulTransactionList\"u\n" +
+	"\x1bRespDoubtfulTransactionList\x12V\n" +
+	"\x15doubtful_transactions\x18\x01 \x03(\v2!.messages.RespDoubtfulTransactionR\x14doubtfulTransactions\"C\n" +
 	"\x0fReqRegistration\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x12\n" +
 	"\x10RespRegistration\"E\n" +
 	"\x11ReqAuthentication\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"0\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"I\n" +
 	"\x12RespAuthentication\x12\x1a\n" +
-	"\bnewToken\x18\x01 \x01(\tR\bnewTokenB\x0fZ\r./protoStructb\x06proto3"
+	"\bnewToken\x18\x01 \x01(\tR\bnewToken\x12\x17\n" +
+	"\arole_id\x18\x02 \x01(\x03R\x06roleIdB\x0fZ\r./protoStructb\x06proto3"
 
 var (
 	file_protoStruct_messages_proto_rawDescOnce sync.Once
@@ -595,26 +808,31 @@ func file_protoStruct_messages_proto_rawDescGZIP() []byte {
 	return file_protoStruct_messages_proto_rawDescData
 }
 
-var file_protoStruct_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_protoStruct_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_protoStruct_messages_proto_goTypes = []any{
-	(*Request)(nil),             // 0: messages.Request
-	(*Response)(nil),            // 1: messages.Response
-	(*ReqTransaction)(nil),      // 2: messages.ReqTransaction
-	(*RespTransaction)(nil),     // 3: messages.RespTransaction
-	(*ReqTransactionList)(nil),  // 4: messages.ReqTransactionList
-	(*RespTransactionList)(nil), // 5: messages.RespTransactionList
-	(*ReqRegistration)(nil),     // 6: messages.ReqRegistration
-	(*RespRegistration)(nil),    // 7: messages.RespRegistration
-	(*ReqAuthentication)(nil),   // 8: messages.ReqAuthentication
-	(*RespAuthentication)(nil),  // 9: messages.RespAuthentication
+	(*Request)(nil),                     // 0: messages.Request
+	(*Response)(nil),                    // 1: messages.Response
+	(*ReqTransaction)(nil),              // 2: messages.ReqTransaction
+	(*RespTransaction)(nil),             // 3: messages.RespTransaction
+	(*ReqTransactionList)(nil),          // 4: messages.ReqTransactionList
+	(*RespTransactionList)(nil),         // 5: messages.RespTransactionList
+	(*ReqDoubtfulTransaction)(nil),      // 6: messages.ReqDoubtfulTransaction
+	(*RespDoubtfulTransaction)(nil),     // 7: messages.RespDoubtfulTransaction
+	(*ReqDoubtfulTransactionList)(nil),  // 8: messages.ReqDoubtfulTransactionList
+	(*RespDoubtfulTransactionList)(nil), // 9: messages.RespDoubtfulTransactionList
+	(*ReqRegistration)(nil),             // 10: messages.ReqRegistration
+	(*RespRegistration)(nil),            // 11: messages.RespRegistration
+	(*ReqAuthentication)(nil),           // 12: messages.ReqAuthentication
+	(*RespAuthentication)(nil),          // 13: messages.RespAuthentication
 }
 var file_protoStruct_messages_proto_depIdxs = []int32{
 	3, // 0: messages.RespTransactionList.transactions:type_name -> messages.RespTransaction
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	7, // 1: messages.RespDoubtfulTransactionList.doubtful_transactions:type_name -> messages.RespDoubtfulTransaction
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_protoStruct_messages_proto_init() }
@@ -628,7 +846,7 @@ func file_protoStruct_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protoStruct_messages_proto_rawDesc), len(file_protoStruct_messages_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

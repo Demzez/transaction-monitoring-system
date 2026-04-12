@@ -41,25 +41,26 @@ func (r *Repository) Register(login string, password string, role int, createdAt
 	return nil
 }
 
-func (r *Repository) Authenticate(username, password string) error {
+func (r *Repository) Authenticate(username, password string) (int64, error) {
 
 	const op = "internal.repository.postgres.user.Authenticate"
 
 	var thisPassword string
+	var roleId int64
 
 	err := r.db.QueryRow(context.Background(),
-		`SELECT password FROM "user" WHERE login = $1`, username,
-	).Scan(&thisPassword)
+		`SELECT password, role_id FROM "user" WHERE login = $1`, username,
+	).Scan(&thisPassword, &roleId)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
+			return 0, fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
 		}
-		return fmt.Errorf("%s : %s", op, err)
+		return 0, fmt.Errorf("%s : %s", op, err)
 	}
 
 	if !crypt.Check(password, thisPassword) {
-		return fmt.Errorf("%s : %s", op, repository.ErrRecordNotFound)
+		return 0, fmt.Errorf("%s : %s", op, repository.ErrRecordNotFound)
 	}
 
-	return nil
+	return roleId, nil
 }

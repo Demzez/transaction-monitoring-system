@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"transaction-monitoring-system/internal/config"
-	
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -25,7 +25,7 @@ func New(cfg config.PostgresDB) (*Repository, error) {
 			pool.Close()
 		}
 	}()
-	
+
 	_, err = pool.Exec(context.Background(), //TODO: в соответствии с этими правилами придумать прницип работы
 		`CREATE TABLE IF NOT EXISTS "transaction" (
 			transaction_id SERIAL PRIMARY KEY,
@@ -70,7 +70,7 @@ func New(cfg config.PostgresDB) (*Repository, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}
-	
+
 	return &Repository{db: pool}, nil
 }
 
