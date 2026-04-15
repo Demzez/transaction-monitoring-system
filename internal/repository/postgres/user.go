@@ -33,7 +33,7 @@ func (r *Repository) Register(login string, password string, role int, createdAt
 	if err != nil {
 		var pgErr *pgconn.PgError // Код 23505 - unique_violation
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-			return fmt.Errorf("%s : %s", op, repository.ErrRecordAlreadyExists)
+			return fmt.Errorf("%s : %w", op, repository.ErrRecordAlreadyExists)
 		}
 		return fmt.Errorf("%s : %s", op, err)
 	}
@@ -59,7 +59,7 @@ func (r *Repository) Authenticate(username, password string) (int64, error) {
 	}
 
 	if !crypt.Check(password, thisPassword) {
-		return 0, fmt.Errorf("%s : %s", op, repository.ErrRecordNotFound)
+		return 0, fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
 	}
 
 	return roleId, nil

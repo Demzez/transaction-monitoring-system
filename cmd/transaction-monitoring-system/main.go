@@ -15,6 +15,8 @@ import (
 	"transaction-monitoring-system/internal/http-server/post-transaction/save"
 	"transaction-monitoring-system/internal/lib/logger/slog/slogpretty"
 	"transaction-monitoring-system/internal/repository/postgres"
+	fraud_service "transaction-monitoring-system/internal/service/fraud-service"
+	manager_service "transaction-monitoring-system/internal/service/manager-service"
 	"transaction-monitoring-system/internal/tcp-server/controller"
 	"transaction-monitoring-system/internal/tcp-server/handler/all"
 	"transaction-monitoring-system/internal/tcp-server/writers"
@@ -44,24 +46,27 @@ func main() {
 	}
 	log.Info("database is connected", slog.String("connection_pool", repository.Statistic()))
 
-	// start servers
+	//init services
+	managerService := manager_service.NewManagerService(log, repository)
+	fraudService := fraud_service.NewFraudService(log, repository)
+
+	// init http && tcp servers
 	wg := &sync.WaitGroup{}
-	// init http router & server
+
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err = initHttpServer(sigContext, cfg, log, repository)
+		err = newHttpServer(sigContext, log, cfg, fraudService)
 		if err != nil {
 			log.Error("failed in initHTTPserver", slog.String("error", err.Error()))
 			return
 		}
 	}()
 
-	// init tcp server
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err = initTCPServer(sigContext, cfg, log, repository)
+		err = newTCPServer(sigContext, log, cfg, managerService)
 		if err != nil {
 			log.Error("failed in initTCPserver", slog.String("error", err.Error()))
 			return
@@ -73,9 +78,9 @@ func main() {
 	log.Info("----------------------graceful shutdown is completed----------------------")
 }
 
-func initHttpServer(sigCtx context.Context, cfg *config.Config, log *slog.Logger, repository *postgres.Repository) error {
+func newHttpServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, fService *fraud_service.FraudService) error {
 	muxRouter := http.NewServeMux()
-	muxRouter.HandleFunc("POST /post-transaction", save.New(log, repository))
+	muxRouter.HandleFunc("POST /post-transaction", save.New(log, fService))
 
 	srv := &http.Server{
 		Addr:         cfg.HTTPServer.Address,
@@ -106,12 +111,12 @@ func initHttpServer(sigCtx context.Context, cfg *config.Config, log *slog.Logger
 	return nil
 }
 
-func initTCPServer(sigCtx context.Context, cfg *config.Config, log *slog.Logger, repository *postgres.Repository) error {
+func newTCPServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, mService *manager_service.ManagerService) error {
 	wr := &writers.ProtobufWriter{}
-	newController := controller.NewController(log, cfg.TCPServer.IdleTimeout, cfg.JWT.Secret,
-		all.NewRegistrationHandler(log, repository, wr),
-		all.NewAuthenticationHandler(log, repository, wr, cfg.JWT.Secret, cfg.JWT.ExpiryIn),
-		all.NewGetTransactionsHandler(log, repository, wr),
+	newController := controller.NewController(log, cfg,
+		all.NewRegistrationHandler(log, mService, wr),
+		all.NewAuthenticationHandler(log, cfg, mService, wr),
+		all.NewGetTransactionsHandler(log, mService, wr),
 	)
 
 	listener, err := net.Listen("tcp", cfg.TCPServer.Address)

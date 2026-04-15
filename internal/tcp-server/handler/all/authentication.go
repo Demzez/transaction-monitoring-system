@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"net"
 	"time"
-	"transaction-monitoring-system/internal/lib/security/jwt"
+	"transaction-monitoring-system/internal/config"
 	"transaction-monitoring-system/internal/tcp-server/writers"
 	"transaction-monitoring-system/protoStruct"
 
@@ -12,24 +12,25 @@ import (
 )
 
 type Authenticator interface {
-	Authenticate(username, password string) (int64, error)
+	AuthenticateUser(login, password string) (int64, error)
+	GenerateNewUserToken(secret string, expiresIn time.Duration) (string, error)
 }
 
 type AuthenticationHandler struct {
 	log           *slog.Logger
-	db            Authenticator
+	service       Authenticator
 	wr            writers.WrInterface
 	jwtSecret     string
 	tokenLifetime time.Duration
 }
 
-func NewAuthenticationHandler(log *slog.Logger, db Authenticator, wr writers.WrInterface, jwtSecret string, tokenLifetime time.Duration) *AuthenticationHandler {
+func NewAuthenticationHandler(log *slog.Logger, cfg *config.Config, service Authenticator, wr writers.WrInterface) *AuthenticationHandler {
 	return &AuthenticationHandler{
 		log:           log,
-		db:            db,
+		service:       service,
 		wr:            wr,
-		jwtSecret:     jwtSecret,
-		tokenLifetime: tokenLifetime,
+		jwtSecret:     cfg.JWT.Secret,
+		tokenLifetime: cfg.JWT.ExpiryIn,
 	}
 }
 
@@ -51,16 +52,21 @@ func (h *AuthenticationHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 		return
 	}
 
-	roleID, err := h.db.Authenticate(pd.Login, pd.Password)
+	roleID, err := h.service.AuthenticateUser(pd.Login, pd.Password)
 	if err != nil {
-		handlerLog.Error("failed to authenticate", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "incorrect login or password"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
 		}
 		return
 	}
 
-	newToken, _ := jwt.GenerateToken(h.jwtSecret, h.tokenLifetime)
+	newToken, err := h.service.GenerateNewUserToken(h.jwtSecret, h.tokenLifetime)
+	if err != nil {
+		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
+			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
+		}
+	}
+
 	protoAnswer := protoStruct.RespAuthentication{
 		NewToken: newToken,
 		RoleId:   roleID,
@@ -68,7 +74,7 @@ func (h *AuthenticationHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 
 	data, err := proto.Marshal(&protoAnswer)
 	if err != nil {
-		handlerLog.Error("failed to marshal token", slog.String("error", err.Error()))
+		handlerLog.Error("failed to marshal payload", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to response with error", slog.String("error", err.Error()))
 		}

@@ -9,6 +9,7 @@ import (
 	"os"
 	"sync"
 	"time"
+	"transaction-monitoring-system/internal/config"
 	custom_error "transaction-monitoring-system/internal/lib/custom-error"
 	"transaction-monitoring-system/internal/lib/security/jwt"
 	"transaction-monitoring-system/protoStruct"
@@ -28,7 +29,7 @@ type Controller struct {
 	jwtSecret   string
 }
 
-func NewController(log *slog.Logger, idleTimeout time.Duration, jwtSecret string, handlers ...Handler) *Controller {
+func NewController(log *slog.Logger, cfg *config.Config, handlers ...Handler) *Controller {
 	register := make(map[string]Handler)
 	for _, h := range handlers {
 		register[h.Type()] = h
@@ -37,8 +38,8 @@ func NewController(log *slog.Logger, idleTimeout time.Duration, jwtSecret string
 	return &Controller{
 		log:         log,
 		handlers:    register,
-		idleTimeout: idleTimeout,
-		jwtSecret:   jwtSecret,
+		idleTimeout: cfg.TCPServer.IdleTimeout,
+		jwtSecret:   cfg.JWT.Secret,
 	}
 }
 
@@ -88,7 +89,7 @@ func (c *Controller) Process(conn net.Conn, wg *sync.WaitGroup) {
 }
 
 func setConnectionTimeout(log *slog.Logger, conn net.Conn, timeout time.Duration) error {
-	if timeout >= 0 {
+	if timeout > 0 {
 		err := conn.SetDeadline(time.Now().Add(timeout))
 		if err != nil {
 			log.Error("failed to set timeout", slog.String("error", err.Error()))
@@ -107,15 +108,15 @@ func readLengthPrefix(log *slog.Logger, conn net.Conn) (uint32, error) {
 
 	lenBuf := make([]byte, 4)
 
-	_, err := io.ReadFull(conn, lenBuf)
+	_, err := io.ReadFull(conn, lenBuf) //TODO: поправить функцию на switch
 	if err != nil {
 		if errors.Is(err, os.ErrDeadlineExceeded) {
-			log.Warn("timeout exceeded", slog.String("error", err.Error()))
+			log.Warn("timeout exceeded", slog.String("extra", err.Error()))
 			return 0, custom_error.ErrFunc
 		}
 
 		if errors.Is(err, io.EOF) {
-			log.Warn("client disconnected", slog.String("error", err.Error()))
+			log.Warn("client disconnected", slog.String("extra", err.Error()))
 			return 0, custom_error.ErrFunc
 		}
 

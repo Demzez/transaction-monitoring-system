@@ -1,12 +1,12 @@
-package save
+package save //TODO: придумать другое название, скорее всего это будет handler, дальше service(в котором будет лежать логика антифрода), ну и репозиторий
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
-	"time"
-	"transaction-monitoring-system/internal/dto"
+	"transaction-monitoring-system/internal/repository"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -19,11 +19,10 @@ type Request struct {
 	Status    string `json:"status" validate:"required"`
 }
 
-type TransactionSaver interface {
-	SaveTransaction(transaction dto.TransactionDTO) error
+type Analyzer interface {
 }
 
-func New(log *slog.Logger, saver TransactionSaver) http.HandlerFunc {
+func New(log *slog.Logger, saver Analyzer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "internal.http-server.post-transaction.save.New"
 
@@ -51,23 +50,22 @@ func New(log *slog.Logger, saver TransactionSaver) http.HandlerFunc {
 			return
 		}
 
-		err = saver.SaveTransaction(dto.TransactionDTO{
-			Hash:      req.Hash,
-			Source:    req.Source,
-			Amount:    req.Amount,
-			Direction: req.Direction,
-			Status:    req.Status,
-			CreatedAt: time.Now(),
-		})
+		//err = saver.SaveTransaction(dto.TransactionDTO{
+		//	Hash:      req.Hash,
+		//	Source:    req.Source,
+		//	Amount:    req.Amount,
+		//	Direction: req.Direction,
+		//	Status:    req.Status,
+		//	CreatedAt: time.Now(),
+		//})
 		if err != nil {
-			// TODO: add check for unique violation error, or doing something other
-			//if errors.Is(err, repository.ErrTransactionAlreadyExists) {
-			//	handlerlog.Error("transaction already exist", slog.String("error", err.Error()))
-			//
-			//	http.Error(w, "transaction already exist", http.StatusInternalServerError)
-			//
-			//	return
-			//}
+			if errors.Is(err, repository.ErrRecordAlreadyExists) {
+				handlerlog.Error("transaction already exist", slog.String("error", err.Error()))
+
+				http.Error(w, "transaction already exist", http.StatusInternalServerError)
+
+				return
+			}
 			handlerlog.Error("failed to save transaction", slog.String("error", err.Error()))
 
 			http.Error(w, "failed to save transaction", http.StatusInternalServerError)

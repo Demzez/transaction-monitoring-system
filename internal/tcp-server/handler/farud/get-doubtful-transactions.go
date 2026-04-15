@@ -11,20 +11,20 @@ import (
 )
 
 type DoubtfulTransactionsGetter interface {
-	GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
+	GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
 }
 
 type GetDoubtfulTransactionsHandler struct {
-	log *slog.Logger
-	db  DoubtfulTransactionsGetter
-	wr  writers.WrInterface
+	log     *slog.Logger
+	service DoubtfulTransactionsGetter
+	wr      writers.WrInterface
 }
 
-func NewGetDoubtfulTransactionsHandler(log *slog.Logger, db DoubtfulTransactionsGetter, wr writers.WrInterface) *GetDoubtfulTransactionsHandler {
+func NewGetDoubtfulTransactionsHandler(log *slog.Logger, service DoubtfulTransactionsGetter, wr writers.WrInterface) *GetDoubtfulTransactionsHandler {
 	return &GetDoubtfulTransactionsHandler{
-		log: log,
-		db:  db,
-		wr:  wr,
+		log:     log,
+		service: service,
+		wr:      wr,
 	}
 }
 
@@ -36,9 +36,8 @@ func (h *GetDoubtfulTransactionsHandler) Handle(conn net.Conn, req *protoStruct.
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	dlTransactionDTOs, err := h.db.GetDoubtfulTransactions()
+	dlTransactionDTOs, err := h.service.GetAllDoubtfulTransactions()
 	if err != nil {
-		handlerLog.Error("failed to get transaction", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
 		}

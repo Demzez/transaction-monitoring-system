@@ -26,7 +26,7 @@ func New(cfg config.PostgresDB) (*Repository, error) {
 		}
 	}()
 
-	_, err = pool.Exec(context.Background(), //TODO: в соответствии с этими правилами придумать прницип работы
+	_, err = pool.Exec(context.Background(),
 		`CREATE TABLE IF NOT EXISTS "transaction" (
 			transaction_id SERIAL PRIMARY KEY,
 			hash TEXT NOT NULL UNIQUE,

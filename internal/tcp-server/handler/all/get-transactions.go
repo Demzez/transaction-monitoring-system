@@ -11,20 +11,20 @@ import (
 )
 
 type TransactionsGetter interface {
-	GetTransactions() ([]dto.TransactionDTO, error)
+	GetAllTransactions() ([]dto.TransactionDTO, error)
 }
 
 type GetTransactionsHandler struct {
-	log *slog.Logger
-	db  TransactionsGetter
-	wr  writers.WrInterface
+	log     *slog.Logger
+	service TransactionsGetter
+	wr      writers.WrInterface
 }
 
-func NewGetTransactionsHandler(log *slog.Logger, db TransactionsGetter, wr writers.WrInterface) *GetTransactionsHandler {
+func NewGetTransactionsHandler(log *slog.Logger, service TransactionsGetter, wr writers.WrInterface) *GetTransactionsHandler {
 	return &GetTransactionsHandler{
-		log: log,
-		db:  db,
-		wr:  wr,
+		log:     log,
+		service: service,
+		wr:      wr,
 	}
 }
 
@@ -37,9 +37,8 @@ func (h *GetTransactionsHandler) Handle(conn net.Conn, req *protoStruct.Request)
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	transactionDTOs, err := h.db.GetTransactions()
+	transactionDTOs, err := h.service.GetAllTransactions()
 	if err != nil {
-		handlerLog.Error("failed to get transaction", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
 		}

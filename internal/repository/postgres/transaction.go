@@ -90,7 +90,7 @@ func (r *Repository) DeleteTransaction(transactionHash string) error {
 		return fmt.Errorf("%s : %s", op, err)
 	}
 	if res.RowsAffected() == 0 {
-		return fmt.Errorf("%s : %s", op, repository.ErrRecordNotFound)
+		return fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
 	}
 
 	return nil
