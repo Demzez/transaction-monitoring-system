@@ -6,7 +6,10 @@ import (
 )
 
 type RepositoryInterface interface {
+	SaveTransaction(transaction dto.TransactionDTO) (int64, error)
+	SaveDoubtfulTransaction(dlTransaction dto.DoubtfulTransactionDTO) error
 	GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
+	GetActiveFraudRules() ([]dto.FraudRuleDTO, error)
 }
 type FraudService struct {
 	log *slog.Logger

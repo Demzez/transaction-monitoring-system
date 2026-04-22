@@ -27,13 +27,16 @@ func New(cfg config.PostgresDB) (*Repository, error) {
 	}()
 
 	_, err = pool.Exec(context.Background(),
-		`CREATE TABLE IF NOT EXISTS "transaction" (
+		`DROP TABLE IF EXISTS doubtful_transaction;
+			DROP TABLE IF EXISTS transaction;
+
+			CREATE TABLE IF NOT EXISTS "transaction" (
 			transaction_id SERIAL PRIMARY KEY,
 			hash TEXT NOT NULL UNIQUE,
 			source TEXT NOT NULL,
 			amount INT NOT NULL,
 			direction TEXT NOT NULL,
-			status TEXT NOT NULL, --innocent, approve, review, block
+			status TEXT NOT NULL, --innocent | review | block
 			created_at TIMESTAMPTZ NOT NULL,
 			updated_at TIMESTAMPTZ);
 		
@@ -58,14 +61,14 @@ func New(cfg config.PostgresDB) (*Repository, error) {
 			field_name TEXT NOT NULL,        -- amount, country, ip, user_age_days
 			operator TEXT NOT NULL,          -- >, <, =, in, not_in
 			value TEXT NOT NULL,             -- значение условия
-			action TEXT NOT NULL);            -- add_risk, block
+			add_risk INT NOT NULL);            -- add risk score
 		
 		CREATE TABLE IF NOT EXISTS "doubtful_transaction" (
 			assessment_id SERIAL PRIMARY KEY,
 			transaction_id INT NOT NULL UNIQUE REFERENCES transaction(transaction_id),
 			risk_score INT NOT NULL,            -- здесь просто полный счет по нарушениям транзакции 
 			description TEXT NOT NULL,       -- здесь будет источник и сумма
-			decision TEXT NOT NULL);          -- approve | review | block
+			decision TEXT NOT NULL);          -- innocent | review | block
 	`)
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)

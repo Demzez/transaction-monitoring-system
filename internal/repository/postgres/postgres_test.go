@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"fmt"
 	"testing"
 	"time"
 	"transaction-monitoring-system/internal/config"
@@ -19,40 +20,40 @@ func TestRepository_SaveTransaction(t *testing.T) {
 		{
 			name: "Success",
 			transaction: dto.TransactionDTO{
-				Hash:        "rtgrbe7rew343rnjuh893h",
-				Source:      "localhost",
-				Description: "test transaction",
-				Type:        "firstType",
-				Status:      "testStatus",
-				CreatedAt:   time.Now(),
-				UpdatedAt:   time.Now(),
+				Hash:      "rtgrbe7rew343rnjuh893h",
+				Source:    "localhost",
+				Amount:    3000,
+				Direction: "firstD",
+				Status:    "testStatus",
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
 			},
 		},
 		{
 			name: "Error unique hash rule",
 			transaction: dto.TransactionDTO{
-				Hash:        "rtgrbe7rew343rnjuh893h",
-				Source:      "localhost",
-				Description: "test transaction",
-				Type:        "firstType",
-				Status:      "testStatus",
-				CreatedAt:   time.Now(),
-				UpdatedAt:   time.Now(),
+				Hash:      "rtgrbe7rew343rnjuh893h",
+				Source:    "localhost",
+				Amount:    3000,
+				Direction: "firstD",
+				Status:    "testStatus",
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
 			},
 			respError: "internal.repository.postgres.transaction.SaveTransaction : " + repository.ErrRecordAlreadyExists.Error(),
 		},
 	}
 	cfg := config.MustLoad()
-	storage, err := New(cfg.PostgresDB)
+	repo, err := New(cfg.PostgresDB)
 	if err != nil {
-		t.Error("failed to initialize postgres storage")
+		t.Error("failed to initialize postgres repo")
 	}
 
 	for _, tc := range cases {
 		tc := tc
-
 		t.Run(tc.name, func(t *testing.T) {
-			err = storage.SaveTransaction(tc.transaction)
+			id, err := repo.SaveTransaction(tc.transaction)
+			fmt.Println("transaction id: ", id)
 			if err == nil {
 				require.NoError(t, err)
 			} else {

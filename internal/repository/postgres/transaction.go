@@ -11,22 +11,23 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func (r *Repository) SaveTransaction(transaction dto.TransactionDTO) error {
+func (r *Repository) SaveTransaction(transaction dto.TransactionDTO) (int64, error) {
 
 	const op = "internal.repository.postgres.transaction.SaveTransaction"
 
-	_, err := r.db.Exec(context.Background(),
-		`INSERT INTO transaction (hash, source, amount, direction, status, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-		transaction.Hash, transaction.Source, transaction.Amount, transaction.Direction, transaction.Status, transaction.CreatedAt, transaction.UpdatedAt)
+	var transactionId int64
+	err := r.db.QueryRow(context.Background(),
+		`INSERT INTO transaction (hash, source, amount, direction, status, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING transaction_id`,
+		transaction.Hash, transaction.Source, transaction.Amount, transaction.Direction, transaction.Status, transaction.CreatedAt, transaction.UpdatedAt).Scan(&transactionId)
 	if err != nil {
 		var pgErr *pgconn.PgError // Код 23505 - unique_violation
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-			return fmt.Errorf("%s : %w", op, repository.ErrRecordAlreadyExists)
+			return 0, fmt.Errorf("%s : %w", op, repository.ErrRecordAlreadyExists)
 		}
-		return fmt.Errorf("%s : %s", op, err)
+		return 0, fmt.Errorf("%s : %s", op, err)
 	}
 
-	return nil
+	return transactionId, nil
 }
 
 func (r *Repository) GetTransaction(transactionId int64) (dto.TransactionDTO, error) {
@@ -36,8 +37,8 @@ func (r *Repository) GetTransaction(transactionId int64) (dto.TransactionDTO, er
 	var transaction dto.TransactionDTO
 
 	err := r.db.QueryRow(context.Background(),
-		`SELECT hash, source, amount, direction, status, created_at, updated_at FROM transaction WHERE transaction_id = $1`, transactionId,
-	).Scan(&transaction.Hash, &transaction.Source, &transaction.Amount, &transaction.Direction, &transaction.Status, &transaction.CreatedAt, &transaction.UpdatedAt)
+		`SELECT transaction_id, hash, source, amount, direction, status, created_at, updated_at FROM transaction WHERE transaction_id = $1`, transactionId,
+	).Scan(&transaction.TransactionId, &transaction.Hash, &transaction.Source, &transaction.Amount, &transaction.Direction, &transaction.Status, &transaction.CreatedAt, &transaction.UpdatedAt)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return transaction, fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
@@ -52,7 +53,7 @@ func (r *Repository) GetTransactions() ([]dto.TransactionDTO, error) {
 	const op = "internal.repository.postgres.transaction.GetTransactions"
 
 	rows, err := r.db.Query(context.Background(),
-		`SELECT hash, source, amount, direction, status, created_at, updated_at FROM transaction`)
+		`SELECT transaction_id, hash, source, amount, direction, status, created_at, updated_at FROM transaction`)
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}
@@ -62,6 +63,7 @@ func (r *Repository) GetTransactions() ([]dto.TransactionDTO, error) {
 	for rows.Next() {
 		var transaction dto.TransactionDTO
 		err = rows.Scan(
+			&transaction.TransactionId,
 			&transaction.Hash,
 			&transaction.Source,
 			&transaction.Amount,

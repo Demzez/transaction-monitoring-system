@@ -11,8 +11,6 @@ func (s *FraudService) GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDT
 	dlTransactions, err := s.r.GetDoubtfulTransactions()
 	if err != nil {
 		switch {
-		case errors.Is(err, repository.ErrRecordAlreadyExists):
-			s.log.Warn("record already exists", slog.String("extra", err.Error()))
 		case errors.Is(err, repository.ErrRecordNotFound):
 			s.log.Warn("record not found", slog.String("extra", err.Error()))
 		default:

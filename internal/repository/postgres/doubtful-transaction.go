@@ -73,6 +73,9 @@ func (r *Repository) GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, er
 	if err = rows.Err(); err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}
+	if len(dlTransactions) == 0 {
+		return nil, fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
+	}
 	return dlTransactions, nil
 }
 

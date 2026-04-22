@@ -22,14 +22,15 @@ message ReqTransaction {
   int64 transaction_id = 1;
 }
 message RespTransaction {
-  string hash         = 1;
-  string source       = 2;
-  int64 amount  = 3;
-  string direction         = 4;
-  string status       = 5;
+  int64 transaction_id = 1;
+  string hash         = 2;
+  string source       = 3;
+  int64 amount  = 4;
+  string direction         = 5;
+  string status       = 6;
 
-  int64 created_at = 6;
-  int64 updated_at = 7;
+  int64 created_at = 7;
+  int64 updated_at = 8;
 }
 message ReqTransactionList {
   // empty slice of byte

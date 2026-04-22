@@ -190,13 +190,14 @@ func (x *ReqTransaction) GetTransactionId() int64 {
 
 type RespTransaction struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Hash          string                 `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-	Source        string                 `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`
-	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
-	Direction     string                 `protobuf:"bytes,4,opt,name=direction,proto3" json:"direction,omitempty"`
-	Status        string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	CreatedAt     int64                  `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     int64                  `protobuf:"varint,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	Hash          string                 `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
+	Source        string                 `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
+	Amount        int64                  `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
+	Direction     string                 `protobuf:"bytes,5,opt,name=direction,proto3" json:"direction,omitempty"`
+	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	CreatedAt     int64                  `protobuf:"varint,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     int64                  `protobuf:"varint,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -229,6 +230,13 @@ func (x *RespTransaction) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RespTransaction.ProtoReflect.Descriptor instead.
 func (*RespTransaction) Descriptor() ([]byte, []int) {
 	return file_protoStruct_messages_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *RespTransaction) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
 }
 
 func (x *RespTransaction) GetHash() string {
@@ -760,17 +768,18 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\x06result\x18\x02 \x01(\fR\x06result\x12\x14\n" +
 	"\x05error\x18\x03 \x01(\tR\x05error\"7\n" +
 	"\x0eReqTransaction\x12%\n" +
-	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\"\xc9\x01\n" +
-	"\x0fRespTransaction\x12\x12\n" +
-	"\x04hash\x18\x01 \x01(\tR\x04hash\x12\x16\n" +
-	"\x06source\x18\x02 \x01(\tR\x06source\x12\x16\n" +
-	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x1c\n" +
-	"\tdirection\x18\x04 \x01(\tR\tdirection\x12\x16\n" +
-	"\x06status\x18\x05 \x01(\tR\x06status\x12\x1d\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\"\xf0\x01\n" +
+	"\x0fRespTransaction\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\x12\x12\n" +
+	"\x04hash\x18\x02 \x01(\tR\x04hash\x12\x16\n" +
+	"\x06source\x18\x03 \x01(\tR\x06source\x12\x16\n" +
+	"\x06amount\x18\x04 \x01(\x03R\x06amount\x12\x1c\n" +
+	"\tdirection\x18\x05 \x01(\tR\tdirection\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\a \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\x03R\tupdatedAt\"\x14\n" +
+	"updated_at\x18\b \x01(\x03R\tupdatedAt\"\x14\n" +
 	"\x12ReqTransactionList\"T\n" +
 	"\x13RespTransactionList\x12=\n" +
 	"\ftransactions\x18\x01 \x03(\v2\x19.messages.RespTransactionR\ftransactions\"=\n" +

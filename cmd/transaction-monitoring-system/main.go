@@ -12,7 +12,7 @@ import (
 	"sync"
 	"syscall"
 	"transaction-monitoring-system/internal/config"
-	"transaction-monitoring-system/internal/http-server/post-transaction/save"
+	"transaction-monitoring-system/internal/http-server/receive"
 	"transaction-monitoring-system/internal/lib/logger/slog/slogpretty"
 	"transaction-monitoring-system/internal/repository/postgres"
 	fraud_service "transaction-monitoring-system/internal/service/fraud-service"
@@ -38,10 +38,6 @@ func main() {
 	repository, err := postgres.New(cfg.PostgresDB)
 	if err != nil {
 		log.Error("database is not initialized", slog.String("error", err.Error()))
-		os.Exit(1)
-	}
-	if repository == nil {
-		log.Error("database is not initialized correctly")
 		os.Exit(1)
 	}
 	log.Info("database is connected", slog.String("connection_pool", repository.Statistic()))
@@ -80,7 +76,7 @@ func main() {
 
 func newHttpServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, fService *fraud_service.FraudService) error {
 	muxRouter := http.NewServeMux()
-	muxRouter.HandleFunc("POST /post-transaction", save.New(log, fService))
+	muxRouter.HandleFunc("POST /send", receive.New(log, fService))
 
 	srv := &http.Server{
 		Addr:         cfg.HTTPServer.Address,
@@ -116,6 +112,7 @@ func newTCPServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, 
 	newController := controller.NewController(log, cfg,
 		all.NewRegistrationHandler(log, mService, wr),
 		all.NewAuthenticationHandler(log, cfg, mService, wr),
+		all.NewGetTransactionHandler(log, mService, wr),
 		all.NewGetTransactionsHandler(log, mService, wr),
 	)
 

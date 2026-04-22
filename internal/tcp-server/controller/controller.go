@@ -108,20 +108,19 @@ func readLengthPrefix(log *slog.Logger, conn net.Conn) (uint32, error) {
 
 	lenBuf := make([]byte, 4)
 
-	_, err := io.ReadFull(conn, lenBuf) //TODO: поправить функцию на switch
+	_, err := io.ReadFull(conn, lenBuf)
 	if err != nil {
-		if errors.Is(err, os.ErrDeadlineExceeded) {
+		switch {
+		case errors.Is(err, os.ErrDeadlineExceeded):
 			log.Warn("timeout exceeded", slog.String("extra", err.Error()))
 			return 0, custom_error.ErrFunc
-		}
-
-		if errors.Is(err, io.EOF) {
+		case errors.Is(err, io.EOF):
 			log.Warn("client disconnected", slog.String("extra", err.Error()))
 			return 0, custom_error.ErrFunc
+		default:
+			log.Error("something wrong with length prefix", slog.String("error", err.Error()))
+			return 0, custom_error.ErrFunc
 		}
-
-		log.Error("something wrong with length prefix", slog.String("error", err.Error()))
-		return 0, custom_error.ErrFunc
 	}
 
 	length := binary.BigEndian.Uint32(lenBuf)
