@@ -6,9 +6,9 @@ import (
 )
 
 type RepositoryInterface interface {
-	SaveTransaction(transaction dto.TransactionDTO) (int64, error)
-	SaveDoubtfulTransaction(dlTransaction dto.DoubtfulTransactionDTO) error
-	GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
+	CreateTransaction(transaction dto.TransactionDTO) (int64, error)
+	CreateDoubtfulTransaction(dlTransaction dto.DoubtfulTransactionDTO) error
+	GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
 	GetActiveFraudRules() ([]dto.FraudRuleDTO, error)
 }
 type FraudService struct {

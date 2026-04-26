@@ -27,10 +27,7 @@ func New(cfg config.PostgresDB) (*Repository, error) {
 	}()
 
 	_, err = pool.Exec(context.Background(),
-		`DROP TABLE IF EXISTS doubtful_transaction;
-			DROP TABLE IF EXISTS transaction;
-
-			CREATE TABLE IF NOT EXISTS "transaction" (
+		`CREATE TABLE IF NOT EXISTS "transaction" (
 			transaction_id SERIAL PRIMARY KEY,
 			hash TEXT NOT NULL UNIQUE,
 			source TEXT NOT NULL,

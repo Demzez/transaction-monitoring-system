@@ -2,7 +2,6 @@ package receive //TODO: придумать другое название, ско
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
 	"time"
 	"transaction-monitoring-system/internal/dto"
@@ -22,10 +21,8 @@ type FraudService interface {
 	Control(transaction dto.TransactionDTO) error
 }
 
-func New(log *slog.Logger, fService FraudService) http.HandlerFunc {
+func New(fService FraudService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		const op = "internal.http-server.receive.save.New"
-
 		var req Request
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {

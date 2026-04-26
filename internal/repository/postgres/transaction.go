@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func (r *Repository) SaveTransaction(transaction dto.TransactionDTO) (int64, error) {
+func (r *Repository) CreateTransaction(transaction dto.TransactionDTO) (int64, error) {
 
 	const op = "internal.repository.postgres.transaction.SaveTransaction"
 
@@ -30,7 +30,7 @@ func (r *Repository) SaveTransaction(transaction dto.TransactionDTO) (int64, err
 	return transactionId, nil
 }
 
-func (r *Repository) GetTransaction(transactionId int64) (dto.TransactionDTO, error) {
+func (r *Repository) GetTransactionById(transactionId int64) (dto.TransactionDTO, error) {
 
 	const op = "internal.repository.postgres.transaction.GetTransaction"
 
@@ -49,8 +49,8 @@ func (r *Repository) GetTransaction(transactionId int64) (dto.TransactionDTO, er
 	return transaction, nil
 }
 
-func (r *Repository) GetTransactions() ([]dto.TransactionDTO, error) {
-	const op = "internal.repository.postgres.transaction.GetTransactions"
+func (r *Repository) GetAllTransactions() ([]dto.TransactionDTO, error) {
+	const op = "internal.repository.postgres.transaction.GetAllTransactions"
 
 	rows, err := r.db.Query(context.Background(),
 		`SELECT transaction_id, hash, source, amount, direction, status, created_at, updated_at FROM transaction`)
@@ -83,7 +83,7 @@ func (r *Repository) GetTransactions() ([]dto.TransactionDTO, error) {
 	return transactions, nil
 }
 
-func (r *Repository) DeleteTransaction(transactionHash string) error {
+func (r *Repository) DeleteTransactionByHash(transactionHash string) error {
 	const op = "internal.repository.postgres.transaction.DeleteTransaction"
 
 	res, err := r.db.Exec(context.Background(),

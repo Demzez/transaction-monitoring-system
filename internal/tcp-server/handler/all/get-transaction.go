@@ -6,7 +6,7 @@ import (
 	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/tcp-server/writers"
 	"transaction-monitoring-system/protoStruct"
-	
+
 	"google.golang.org/protobuf/proto"
 )
 
@@ -29,14 +29,13 @@ func NewGetTransactionHandler(log *slog.Logger, service TransactionGetter, wr wr
 }
 
 func (h *GetTransactionHandler) Handle(conn net.Conn, req *protoStruct.Request) {
-	
-	const op = "internal.tcp-server.handler.get-transaction.Process"
-	
+	const op = "internal.tcp-server.handler.all.get-transaction.Handle"
+
 	handlerLog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
-	
+
 	var pd protoStruct.ReqTransaction
 	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
 		handlerLog.Error("bad unmarshal payload", slog.String("error", err.Error()))
@@ -45,14 +44,7 @@ func (h *GetTransactionHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 		}
 		return
 	}
-	if pd.TransactionId == 0 {
-		handlerLog.Info("transaction_id is a required")
-		if err := h.wr.WriteError(conn, "transaction_id is a required"); err != nil {
-			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
-		}
-		return
-	}
-	
+
 	transactionDTO, err := h.service.GetTransaction(pd.TransactionId)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
@@ -60,7 +52,7 @@ func (h *GetTransactionHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 		}
 		return
 	}
-	
+
 	data, err := proto.Marshal(transactionDTO.DTOToProto())
 	if err != nil {
 		handlerLog.Error("failed to marshal transaction", slog.String("error", err.Error()))
@@ -69,11 +61,11 @@ func (h *GetTransactionHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 		}
 		return
 	}
-	
+
 	if err = h.wr.WriteResponse(conn, data); err != nil {
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
-	
+
 	handlerLog.Info("transaction successfully sent")
 }
 

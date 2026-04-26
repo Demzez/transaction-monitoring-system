@@ -89,7 +89,7 @@ func TestRepository_DeleteTransaction(t *testing.T) {
 		tc := tc
 
 		t.Run(tc.name, func(t *testing.T) {
-			err = storage.DeleteTransaction(tc.transactionHash)
+			err = storage.DeleteTransactionByHash(tc.transactionHash)
 			if err == nil {
 				require.NoError(t, err)
 			} else {

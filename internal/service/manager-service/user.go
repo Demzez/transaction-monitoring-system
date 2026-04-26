@@ -11,6 +11,8 @@ import (
 
 func (s *ManagerService) RegisterManager(login string, password string) error {
 	err := s.r.Register(login, password, postgres.ROLE_MANAGER, time.Now())
+	//s.r.Register("fraud", "ff", postgres.ROLE_FRAUD_SPECIALIST, time.Now())
+	//s.r.Register("admin", "aa", postgres.ROLE_ADMIN, time.Now())
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordAlreadyExists):

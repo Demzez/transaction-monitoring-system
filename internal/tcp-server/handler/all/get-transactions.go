@@ -11,7 +11,7 @@ import (
 )
 
 type TransactionsGetter interface {
-	GetAllTransactions() ([]dto.TransactionDTO, error)
+	GetTransactions() ([]dto.TransactionDTO, error)
 }
 
 type GetTransactionsHandler struct {
@@ -37,7 +37,7 @@ func (h *GetTransactionsHandler) Handle(conn net.Conn, req *protoStruct.Request)
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	transactionDTOs, err := h.service.GetAllTransactions()
+	transactionDTOs, err := h.service.GetTransactions()
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
@@ -63,7 +63,7 @@ func (h *GetTransactionsHandler) Handle(conn net.Conn, req *protoStruct.Request)
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
 
-	handlerLog.Info("transaction successfully sent")
+	handlerLog.Info("transactions successfully sent")
 }
 
 func (h *GetTransactionsHandler) Type() string {

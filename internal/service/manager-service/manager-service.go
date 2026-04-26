@@ -8,8 +8,8 @@ import (
 
 type RepositoryInterface interface {
 	Authenticate(username, password string) (int64, error)
-	GetTransaction(int64) (dto.TransactionDTO, error)
-	GetTransactions() ([]dto.TransactionDTO, error)
+	GetTransactionById(int64) (dto.TransactionDTO, error)
+	GetAllTransactions() ([]dto.TransactionDTO, error)
 	Register(login string, password string, role int, createdAt time.Time) error
 }
 type ManagerService struct {

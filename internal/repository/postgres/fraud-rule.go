@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func (r *Repository) SaveFraudRule(rule dto.FraudRuleDTO) error {
+func (r *Repository) CreateFraudRule(rule dto.FraudRuleDTO) error {
 	const op = "internal.repository.postgres.fraud-rule.SaveFraudRule"
 
 	_, err := r.db.Exec(context.Background(),

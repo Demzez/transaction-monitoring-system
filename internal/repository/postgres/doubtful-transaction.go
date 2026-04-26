@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func (r *Repository) SaveDoubtfulTransaction(dlTransaction dto.DoubtfulTransactionDTO) error {
+func (r *Repository) CreateDoubtfulTransaction(dlTransaction dto.DoubtfulTransactionDTO) error {
 	const op = "internal.repository.postgres.doubtful-transaction.SaveDoubtfulTransaction"
 
 	_, err := r.db.Exec(context.Background(),
@@ -28,7 +28,7 @@ func (r *Repository) SaveDoubtfulTransaction(dlTransaction dto.DoubtfulTransacti
 	return nil
 }
 
-func (r *Repository) GetDoubtfulTransaction(assessmentId int64) (dto.DoubtfulTransactionDTO, error) {
+func (r *Repository) GetDoubtfulTransactionById(assessmentId int64) (dto.DoubtfulTransactionDTO, error) {
 	const op = "internal.repository.postgres.doubtful-transaction.GetDoubtfulTransaction"
 
 	var dlTransaction dto.DoubtfulTransactionDTO
@@ -46,7 +46,7 @@ func (r *Repository) GetDoubtfulTransaction(assessmentId int64) (dto.DoubtfulTra
 	return dlTransaction, nil
 }
 
-func (r *Repository) GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error) {
+func (r *Repository) GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error) {
 	const op = "internal.repository.postgres.doubtful-transaction.GetDoubtfulTransactions"
 
 	rows, err := r.db.Query(context.Background(),
@@ -79,7 +79,7 @@ func (r *Repository) GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, er
 	return dlTransactions, nil
 }
 
-func (r *Repository) DeleteDoubtfulTransaction(assessmentId int64) error {
+func (r *Repository) DeleteDoubtfulTransactionById(assessmentId int64) error {
 	const op = "internal.repository.postgres.doubtful-transaction.DeleteDoubtfulTransaction"
 
 	res, err := r.db.Exec(context.Background(),

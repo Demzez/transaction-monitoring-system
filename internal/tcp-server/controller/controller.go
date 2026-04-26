@@ -118,7 +118,7 @@ func readLengthPrefix(log *slog.Logger, conn net.Conn) (uint32, error) {
 			log.Warn("client disconnected", slog.String("extra", err.Error()))
 			return 0, custom_error.ErrFunc
 		default:
-			log.Error("something wrong with length prefix", slog.String("error", err.Error()))
+			log.Error("failed to read length prefix", slog.String("error", err.Error()))
 			return 0, custom_error.ErrFunc
 		}
 	}
@@ -141,7 +141,7 @@ func readByteMessage(log *slog.Logger, conn net.Conn, length uint32) ([]byte, er
 
 	_, err := io.ReadFull(conn, message)
 	if err != nil {
-		log.Error("something wrong with payload", slog.String("error", err.Error()))
+		log.Error("failed to read payload", slog.String("error", err.Error()))
 		return nil, custom_error.ErrFunc
 	}
 
@@ -153,7 +153,7 @@ func byteToProtobufRequest(log *slog.Logger, message []byte) (*protoStruct.Reque
 
 	err := proto.Unmarshal(message, &req)
 	if err != nil {
-		log.Error("bad unmarshal message", slog.String("error", err.Error()))
+		log.Error("failed to unmarshal message", slog.String("error", err.Error()))
 		return nil, custom_error.ErrFunc
 	}
 

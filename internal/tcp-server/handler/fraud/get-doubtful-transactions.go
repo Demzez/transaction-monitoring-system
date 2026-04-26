@@ -1,4 +1,4 @@
-package farud
+package fraud
 
 import (
 	"log/slog"
@@ -11,7 +11,7 @@ import (
 )
 
 type DoubtfulTransactionsGetter interface {
-	GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
+	GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
 }
 
 type GetDoubtfulTransactionsHandler struct {
@@ -29,14 +29,14 @@ func NewGetDoubtfulTransactionsHandler(log *slog.Logger, service DoubtfulTransac
 }
 
 func (h *GetDoubtfulTransactionsHandler) Handle(conn net.Conn, req *protoStruct.Request) {
-	const op = "internal.tcp-server.handler.all.get-transactions.Handle"
+	const op = "internal.tcp-server.handler.fraud.get-doubtful-transactions.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	dlTransactionDTOs, err := h.service.GetAllDoubtfulTransactions()
+	dlTransactionDTOs, err := h.service.GetDoubtfulTransactions()
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
@@ -62,9 +62,9 @@ func (h *GetDoubtfulTransactionsHandler) Handle(conn net.Conn, req *protoStruct.
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
 
-	handlerLog.Info("transaction successfully sent")
+	handlerLog.Info("doubtful-transactions successfully sent")
 }
 
 func (h *GetDoubtfulTransactionsHandler) Type() string {
-	return "get-transactions"
+	return "get-doubtful-transactions"
 }

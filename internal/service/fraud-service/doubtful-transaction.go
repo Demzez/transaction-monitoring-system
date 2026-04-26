@@ -7,8 +7,8 @@ import (
 	"transaction-monitoring-system/internal/repository"
 )
 
-func (s *FraudService) GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error) {
-	dlTransactions, err := s.r.GetDoubtfulTransactions()
+func (s *FraudService) GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error) {
+	dlTransactions, err := s.r.GetAllDoubtfulTransactions()
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordNotFound):

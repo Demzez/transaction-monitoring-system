@@ -2,28 +2,35 @@ package manager_service
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/repository"
 )
 
-
 func (s *ManagerService) GetTransaction(transactionId int64) (dto.TransactionDTO, error) {
-	transactionDTO, err := s.r.GetTransaction(transactionId)
-	switch {
-	case errors.Is(err, repository.ErrRecordAlreadyExists):
-		s.log.Warn("record already exists", slog.String("extra", err.Error()))
-	case errors.Is(err, repository.ErrRecordNotFound):
-		s.log.Warn("record not found", slog.String("extra", err.Error()))
-	default:
-		s.log.Error("failed to get transaction", slog.String("error", err.Error()))
+	if transactionId == 0 {
+		s.log.Error("transaction_id is a required", slog.String("error", "invalid transaction id"))
+		return dto.TransactionDTO{}, fmt.Errorf("invalid transaction id")
 	}
-	
+
+	transactionDTO, err := s.r.GetTransactionById(transactionId)
+	if err != nil {
+		switch {
+		case errors.Is(err, repository.ErrRecordAlreadyExists):
+			s.log.Warn("record already exists", slog.String("extra", err.Error()))
+		case errors.Is(err, repository.ErrRecordNotFound):
+			s.log.Warn("record not found", slog.String("extra", err.Error()))
+		default:
+			s.log.Error("failed to get transaction", slog.String("error", err.Error()))
+		}
+	}
+
 	return transactionDTO, err
 }
 
-func (s *ManagerService) GetAllTransactions() ([]dto.TransactionDTO, error) {
-	transactions, err := s.r.GetTransactions()
+func (s *ManagerService) GetTransactions() ([]dto.TransactionDTO, error) {
+	transactions, err := s.r.GetAllTransactions()
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordNotFound):

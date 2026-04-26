@@ -1,4 +1,4 @@
-package fraud_service //TODO: делать делать делать
+package fraud_service
 
 import (
 	"errors"
@@ -60,11 +60,11 @@ func checkRules(rules []dto.FraudRuleDTO, transaction dto.TransactionDTO) (riskS
 		if matches {
 			riskScore += rule.AddRisk
 			descriptions = append(descriptions,
-				fmt.Sprintf("add_risk: %s (%s %s %s) \n", rule.Name, rule.FieldName, rule.Operator, rule.Value))
+				fmt.Sprintf("add_risk: %s (%s %s %s); \n", rule.Name, rule.FieldName, rule.Operator, rule.Value))
 		}
 	}
 
-	description = strings.Join(descriptions, "; ")
+	description = strings.Join(descriptions, "")
 
 	return riskScore, description, nil
 }
@@ -131,7 +131,7 @@ func (s *FraudService) Control(transaction dto.TransactionDTO) error {
 	decision := assessmentRisk(riskScore)
 
 	transaction.Status = decision
-	tId, err := s.r.SaveTransaction(transaction)
+	tId, err := s.r.CreateTransaction(transaction)
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordAlreadyExists):
@@ -143,13 +143,13 @@ func (s *FraudService) Control(transaction dto.TransactionDTO) error {
 	}
 
 	if decision != Innocent {
-		doubtful := dto.DoubtfulTransactionDTO{
+		doubtfulTransaction := dto.DoubtfulTransactionDTO{
 			TransactionId: tId,
 			RiskScore:     riskScore,
 			Description:   description,
 			Decision:      decision,
 		}
-		err = s.r.SaveDoubtfulTransaction(doubtful)
+		err = s.r.CreateDoubtfulTransaction(doubtfulTransaction)
 		if err != nil {
 			switch {
 			case errors.Is(err, repository.ErrRecordAlreadyExists):
