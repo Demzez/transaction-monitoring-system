@@ -10,6 +10,7 @@ type RepositoryInterface interface {
 	CreateDoubtfulTransaction(dlTransaction dto.DoubtfulTransactionDTO) error
 	GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
 	GetActiveFraudRules() ([]dto.FraudRuleDTO, error)
+	GetAllFraudRules() ([]dto.FraudRuleDTO, error)
 }
 type FraudService struct {
 	log *slog.Logger

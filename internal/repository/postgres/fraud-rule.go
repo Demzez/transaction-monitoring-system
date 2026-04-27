@@ -27,11 +27,47 @@ func (r *Repository) CreateFraudRule(rule dto.FraudRuleDTO) error {
 	return nil
 }
 
-func (r *Repository) GetActiveFraudRules() ([]dto.FraudRuleDTO, error) {
+func (r *Repository) GetAllFraudRules() ([]dto.FraudRuleDTO, error) {
 	const op = "internal.repository.postgres.fraud-rule.GetActiveFrudRules"
 
 	rows, err := r.db.Query(context.Background(),
 		`SELECT rule_id, name, active, field_name, operator, value, add_risk FROM fraud_rule`)
+	if err != nil {
+		return nil, fmt.Errorf("%s : %s", op, err)
+	}
+	defer rows.Close()
+
+	var activeRules []dto.FraudRuleDTO
+	for rows.Next() {
+		var rule dto.FraudRuleDTO
+		err = rows.Scan(
+			&rule.RuleID,
+			&rule.Name,
+			&rule.Active,
+			&rule.FieldName,
+			&rule.Operator,
+			&rule.Value,
+			&rule.AddRisk)
+		if err != nil {
+			return nil, fmt.Errorf("%s : %s", op, err)
+		}
+		activeRules = append(activeRules, rule)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s : %s", op, err)
+	}
+	if len(activeRules) == 0 {
+		return nil, fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
+	}
+	return activeRules, nil
+}
+
+func (r *Repository) GetActiveFraudRules() ([]dto.FraudRuleDTO, error) {
+	const op = "internal.repository.postgres.fraud-rule.GetActiveFrudRules"
+
+	rows, err := r.db.Query(context.Background(),
+		`SELECT rule_id, name, active, field_name, operator, value, add_risk FROM fraud_rule WHERE active = true`)
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}

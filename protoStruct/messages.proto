@@ -73,3 +73,26 @@ message RespAuthentication {
   string newToken = 1;
   int64 role_id = 2;
 }
+
+// ------------------------------------------- Структуры фрод правил
+message ReqFraudRule {
+  int64 rule_id = 1;
+}
+
+message RespFraudRule {
+  int64 rule_id = 1;
+  string name = 2;
+  bool active = 3;
+  string field_name = 4;
+  string operator = 5;
+  string value = 6;
+  int64 add_risk = 7;
+}
+
+message ReqFraudRuleList {
+  // empty slice of byte
+}
+
+message RespFraudRuleList {
+  repeated RespFraudRule fraud_rules = 1;
+}
