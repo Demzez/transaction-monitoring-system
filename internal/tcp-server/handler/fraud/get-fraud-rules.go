@@ -29,7 +29,7 @@ func NewGetFraudRulesHandler(log *slog.Logger, service FraudRulesGetter, wr writ
 }
 
 func (h *GetFraudRulesHandler) Handle(conn net.Conn, req *protoStruct.Request) {
-	const op = "internal.tcp-server.handler.fraud.get-doubtful-transactions.Handle"
+	const op = "internal.tcp-server.handler.fraud.get-fraud-rules.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),

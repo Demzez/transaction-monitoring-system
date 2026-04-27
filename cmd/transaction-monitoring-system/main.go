@@ -117,6 +117,7 @@ func newTCPServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, 
 		all.NewGetTransactionsHandler(log, mService, wr),
 		fraud.NewGetDoubtfulTransactionsHandler(log, fService, wr),
 		fraud.NewGetFraudRulesHandler(log, fService, wr),
+		fraud.NewChangeFraudRuleHandler(log, fService, wr),
 	)
 
 	listener, err := net.Listen("tcp", cfg.TCPServer.Address)

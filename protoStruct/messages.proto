@@ -96,3 +96,13 @@ message ReqFraudRuleList {
 message RespFraudRuleList {
   repeated RespFraudRule fraud_rules = 1;
 }
+
+message ReqChangeFraudRule {
+  int64 rule_id = 1;
+  string name = 2;
+  bool active = 3;
+  string field_name = 4;
+  string operator = 5;
+  string value = 6;
+  int64 add_risk = 7;
+}

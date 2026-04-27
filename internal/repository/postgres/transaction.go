@@ -13,7 +13,7 @@ import (
 
 func (r *Repository) CreateTransaction(transaction dto.TransactionDTO) (int64, error) {
 
-	const op = "internal.repository.postgres.transaction.SaveTransaction"
+	const op = "internal.repository.postgres.transaction.CreateTransaction"
 
 	var transactionId int64
 	err := r.db.QueryRow(context.Background(),

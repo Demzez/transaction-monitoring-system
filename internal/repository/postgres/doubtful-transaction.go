@@ -12,7 +12,7 @@ import (
 )
 
 func (r *Repository) CreateDoubtfulTransaction(dlTransaction dto.DoubtfulTransactionDTO) error {
-	const op = "internal.repository.postgres.doubtful-transaction.SaveDoubtfulTransaction"
+	const op = "internal.repository.postgres.doubtful-transaction.CreateDoubtfulTransaction"
 
 	_, err := r.db.Exec(context.Background(),
 		`INSERT INTO doubtful_transaction (transaction_id, risk_score, description, decision) VALUES ($1, $2, $3, $4)`,

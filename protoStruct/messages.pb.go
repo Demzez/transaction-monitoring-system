@@ -971,6 +971,98 @@ func (x *RespFraudRuleList) GetFraudRules() []*RespFraudRule {
 	return nil
 }
 
+type ReqChangeFraudRule struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RuleId        int64                  `protobuf:"varint,1,opt,name=rule_id,json=ruleId,proto3" json:"rule_id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Active        bool                   `protobuf:"varint,3,opt,name=active,proto3" json:"active,omitempty"`
+	FieldName     string                 `protobuf:"bytes,4,opt,name=field_name,json=fieldName,proto3" json:"field_name,omitempty"`
+	Operator      string                 `protobuf:"bytes,5,opt,name=operator,proto3" json:"operator,omitempty"`
+	Value         string                 `protobuf:"bytes,6,opt,name=value,proto3" json:"value,omitempty"`
+	AddRisk       int64                  `protobuf:"varint,7,opt,name=add_risk,json=addRisk,proto3" json:"add_risk,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReqChangeFraudRule) Reset() {
+	*x = ReqChangeFraudRule{}
+	mi := &file_protoStruct_messages_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReqChangeFraudRule) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReqChangeFraudRule) ProtoMessage() {}
+
+func (x *ReqChangeFraudRule) ProtoReflect() protoreflect.Message {
+	mi := &file_protoStruct_messages_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReqChangeFraudRule.ProtoReflect.Descriptor instead.
+func (*ReqChangeFraudRule) Descriptor() ([]byte, []int) {
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *ReqChangeFraudRule) GetRuleId() int64 {
+	if x != nil {
+		return x.RuleId
+	}
+	return 0
+}
+
+func (x *ReqChangeFraudRule) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ReqChangeFraudRule) GetActive() bool {
+	if x != nil {
+		return x.Active
+	}
+	return false
+}
+
+func (x *ReqChangeFraudRule) GetFieldName() string {
+	if x != nil {
+		return x.FieldName
+	}
+	return ""
+}
+
+func (x *ReqChangeFraudRule) GetOperator() string {
+	if x != nil {
+		return x.Operator
+	}
+	return ""
+}
+
+func (x *ReqChangeFraudRule) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+func (x *ReqChangeFraudRule) GetAddRisk() int64 {
+	if x != nil {
+		return x.AddRisk
+	}
+	return 0
+}
+
 var File_protoStruct_messages_proto protoreflect.FileDescriptor
 
 const file_protoStruct_messages_proto_rawDesc = "" +
@@ -1035,7 +1127,16 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\x10ReqFraudRuleList\"M\n" +
 	"\x11RespFraudRuleList\x128\n" +
 	"\vfraud_rules\x18\x01 \x03(\v2\x17.messages.RespFraudRuleR\n" +
-	"fraudRulesB\x0fZ\r./protoStructb\x06proto3"
+	"fraudRules\"\xc5\x01\n" +
+	"\x12ReqChangeFraudRule\x12\x17\n" +
+	"\arule_id\x18\x01 \x01(\x03R\x06ruleId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
+	"\x06active\x18\x03 \x01(\bR\x06active\x12\x1d\n" +
+	"\n" +
+	"field_name\x18\x04 \x01(\tR\tfieldName\x12\x1a\n" +
+	"\boperator\x18\x05 \x01(\tR\boperator\x12\x14\n" +
+	"\x05value\x18\x06 \x01(\tR\x05value\x12\x19\n" +
+	"\badd_risk\x18\a \x01(\x03R\aaddRiskB\x0fZ\r./protoStructb\x06proto3"
 
 var (
 	file_protoStruct_messages_proto_rawDescOnce sync.Once
@@ -1049,7 +1150,7 @@ func file_protoStruct_messages_proto_rawDescGZIP() []byte {
 	return file_protoStruct_messages_proto_rawDescData
 }
 
-var file_protoStruct_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_protoStruct_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_protoStruct_messages_proto_goTypes = []any{
 	(*Request)(nil),                     // 0: messages.Request
 	(*Response)(nil),                    // 1: messages.Response
@@ -1069,6 +1170,7 @@ var file_protoStruct_messages_proto_goTypes = []any{
 	(*RespFraudRule)(nil),               // 15: messages.RespFraudRule
 	(*ReqFraudRuleList)(nil),            // 16: messages.ReqFraudRuleList
 	(*RespFraudRuleList)(nil),           // 17: messages.RespFraudRuleList
+	(*ReqChangeFraudRule)(nil),          // 18: messages.ReqChangeFraudRule
 }
 var file_protoStruct_messages_proto_depIdxs = []int32{
 	3,  // 0: messages.RespTransactionList.transactions:type_name -> messages.RespTransaction
@@ -1092,7 +1194,7 @@ func file_protoStruct_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protoStruct_messages_proto_rawDesc), len(file_protoStruct_messages_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   18,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -7,7 +7,7 @@ import (
 	"transaction-monitoring-system/internal/config"
 	"transaction-monitoring-system/internal/tcp-server/writers"
 	"transaction-monitoring-system/protoStruct"
-
+	
 	"google.golang.org/protobuf/proto"
 )
 
@@ -35,23 +35,23 @@ func NewAuthenticationHandler(log *slog.Logger, cfg *config.Config, service Auth
 }
 
 func (h *AuthenticationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
-
+	
 	const op = "internal.tcp-server.handler.all.authentication.Handle"
-
+	
 	handlerLog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
-
+	
 	var pd protoStruct.ReqAuthentication
 	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
-		handlerLog.Error("bad unmarshal payload", slog.String("error", err.Error()))
+		handlerLog.Error("failed to unmarshal request", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "bad request"); err != nil {
 			handlerLog.Error("failed to response with error", slog.String("error", err.Error()))
 		}
 		return
 	}
-
+	
 	roleID, err := h.service.AuthenticateUser(pd.Login, pd.Password)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "incorrect login or password"); err != nil {
@@ -59,19 +59,19 @@ func (h *AuthenticationHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 		}
 		return
 	}
-
+	
 	newToken, err := h.service.GenerateNewUserToken(h.jwtSecret, h.tokenLifetime)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
 		}
 	}
-
+	
 	protoAnswer := protoStruct.RespAuthentication{
 		NewToken: newToken,
 		RoleId:   roleID,
 	}
-
+	
 	data, err := proto.Marshal(&protoAnswer)
 	if err != nil {
 		handlerLog.Error("failed to marshal payload", slog.String("error", err.Error()))
@@ -80,11 +80,11 @@ func (h *AuthenticationHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 		}
 		return
 	}
-
+	
 	if err = h.wr.WriteResponse(conn, data); err != nil {
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
-
+	
 	handlerLog.Info("authentication succeed")
 }
 
