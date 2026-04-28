@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/lib/security/crypt"
 	"transaction-monitoring-system/internal/repository"
 
@@ -63,4 +64,37 @@ func (r *Repository) Authenticate(username, password string) (int64, error) {
 	}
 
 	return roleId, nil
+}
+
+func (r *Repository) GetAllUsers() ([]dto.UserDTO, error) {
+	const op = "internal.repository.postgres.user.GetAllUsers"
+
+	rows, err := r.db.Query(context.Background(),
+		`SELECT user_id, login, role_id, created_at FROM "user"`)
+	if err != nil {
+		return nil, fmt.Errorf("%s : %s", op, err)
+	}
+	defer rows.Close()
+
+	var users []dto.UserDTO
+	for rows.Next() {
+		var user dto.UserDTO
+		err = rows.Scan(
+			&user.UserID,
+			&user.Login,
+			&user.RoleId,
+			&user.CreatedAt)
+		if err != nil {
+			return nil, fmt.Errorf("%s : %s", op, err)
+		}
+		users = append(users, user)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s : %s", op, err)
+	}
+	if len(users) == 0 {
+		return nil, fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
+	}
+	return users, nil
 }

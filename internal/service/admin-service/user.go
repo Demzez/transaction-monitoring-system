@@ -1,16 +1,16 @@
-package manager_service
+package admin_service
 
 import (
 	"errors"
 	"log/slog"
 	"time"
-	"transaction-monitoring-system/internal/lib/security/jwt"
+	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/repository"
 	"transaction-monitoring-system/internal/repository/postgres"
 )
 
-func (s *ManagerService) RegisterManager(login string, password string) error {
-	err := s.r.Register(login, password, postgres.ROLE_MANAGER, time.Now())
+func (s *AdminService) RegisterFraudSpecialist(login string, password string) error {
+	err := s.r.Register(login, password, postgres.ROLE_FRAUD_SPECIALIST, time.Now())
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordAlreadyExists):
@@ -25,8 +25,8 @@ func (s *ManagerService) RegisterManager(login string, password string) error {
 	return err
 }
 
-func (s *ManagerService) AuthenticateUser(login, password string) (int64, error) {
-	roleId, err := s.r.Authenticate(login, password)
+func (s *AdminService) RegisterAdmin(login string, password string) error {
+	err := s.r.Register(login, password, postgres.ROLE_ADMIN, time.Now())
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordAlreadyExists):
@@ -34,18 +34,23 @@ func (s *ManagerService) AuthenticateUser(login, password string) (int64, error)
 		case errors.Is(err, repository.ErrRecordNotFound):
 			s.log.Warn("record not found", slog.String("extra", err.Error()))
 		default:
-			s.log.Error("failed to authenticate user", slog.String("error", err.Error()))
+			s.log.Error("failed to register manager", slog.String("error", err.Error()))
 		}
 	}
 
-	return roleId, err
+	return err
 }
 
-func (s *ManagerService) GenerateNewUserToken(secret string, expiresIn time.Duration) (string, error) {
-	newToken, err := jwt.GenerateToken(secret, expiresIn)
+func (s *AdminService) GetUsers() ([]dto.UserDTO, error) {
+	transactions, err := s.r.GetAllUsers()
 	if err != nil {
-		s.log.Error("failed to generate new user token", slog.String("error", err.Error()))
+		switch {
+		case errors.Is(err, repository.ErrRecordNotFound):
+			s.log.Warn("record not found", slog.String("extra", err.Error()))
+		default:
+			s.log.Error("failed to get users", slog.String("error", err.Error()))
+		}
 	}
 
-	return newToken, nil
+	return transactions, err
 }

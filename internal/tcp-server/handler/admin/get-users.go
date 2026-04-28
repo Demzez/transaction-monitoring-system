@@ -1,4 +1,4 @@
-package all
+package admin
 
 import (
 	"log/slog"
@@ -10,42 +10,34 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type TransactionGetter interface {
-	GetTransaction(int64) (dto.TransactionDTO, error)
+type UsersGetter interface {
+	GetUsers() ([]dto.UserDTO, error)
 }
 
-type GetTransactionHandler struct {
+type GetUsersHandler struct {
 	log     *slog.Logger
-	service TransactionGetter
+	service UsersGetter
 	wr      writers.WrInterface
 }
 
-func NewGetTransactionHandler(log *slog.Logger, service TransactionGetter, wr writers.WrInterface) *GetTransactionHandler {
-	return &GetTransactionHandler{
+func NewGetUsersHandler(log *slog.Logger, service UsersGetter, wr writers.WrInterface) *GetUsersHandler {
+	return &GetUsersHandler{
 		log:     log,
 		service: service,
 		wr:      wr,
 	}
 }
 
-func (h *GetTransactionHandler) Handle(conn net.Conn, req *protoStruct.Request) {
-	const op = "internal.tcp-server.handler.all.get-transaction.Handle"
+func (h *GetUsersHandler) Handle(conn net.Conn, req *protoStruct.Request) {
+
+	const op = "internal.tcp-server.handler.admin.get-users.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	var pd protoStruct.ReqTransaction
-	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
-		handlerLog.Error("failed to unmarshal payload", slog.String("error", err.Error()))
-		if err = h.wr.WriteError(conn, "bad request"); err != nil {
-			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
-		}
-		return
-	}
-
-	transactionDTO, err := h.service.GetTransaction(pd.TransactionId)
+	userDTOs, err := h.service.GetUsers()
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
@@ -53,7 +45,12 @@ func (h *GetTransactionHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 		return
 	}
 
-	data, err := proto.Marshal(transactionDTO.DTOToProto())
+	var protoAnswer []*protoStruct.RespUser
+	for _, user := range userDTOs {
+		protoAnswer = append(protoAnswer, user.DTOToProto())
+	}
+
+	data, err := proto.Marshal(&protoStruct.RespUserList{Users: protoAnswer})
 	if err != nil {
 		handlerLog.Error("failed to marshal transaction", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
@@ -66,9 +63,9 @@ func (h *GetTransactionHandler) Handle(conn net.Conn, req *protoStruct.Request) 
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
 
-	handlerLog.Info("transaction successfully sent")
+	handlerLog.Info("transactions successfully sent")
 }
 
-func (h *GetTransactionHandler) Type() string {
-	return "get-transaction"
+func (h *GetUsersHandler) Type() string {
+	return "get-users"
 }

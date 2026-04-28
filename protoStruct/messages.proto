@@ -74,7 +74,20 @@ message RespAuthentication {
   int64 role_id = 2;
 }
 
-// ------------------------------------------- Структуры фрод правил
+message ReqUser {
+  int64 user_id = 1;
+}
+message RespUser {
+  int64 user_id = 1;
+  string login = 2;
+  int64 role_id = 3;
+  int64 created_at = 4;
+}
+message RespUserList {
+  repeated RespUser users = 1;
+}
+
+// ------------------------------------------- Структуры фрод-правил
 message ReqFraudRule {
   int64 rule_id = 1;
 }
@@ -106,3 +119,4 @@ message ReqChangeFraudRule {
   string value = 6;
   int64 add_risk = 7;
 }
+

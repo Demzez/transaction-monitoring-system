@@ -15,7 +15,7 @@ func (r *Repository) CreateDoubtfulTransaction(dlTransaction dto.DoubtfulTransac
 	const op = "internal.repository.postgres.doubtful-transaction.CreateDoubtfulTransaction"
 
 	_, err := r.db.Exec(context.Background(),
-		`INSERT INTO doubtful_transaction (transaction_id, risk_score, description, decision) VALUES ($1, $2, $3, $4)`,
+		`INSERT INTO "doubtful_transaction" (transaction_id, risk_score, description, decision) VALUES ($1, $2, $3, $4)`,
 		dlTransaction.TransactionId, dlTransaction.RiskScore, dlTransaction.Description, dlTransaction.Decision)
 	if err != nil {
 		var pgErr *pgconn.PgError // Код 23505 - unique_violation
@@ -34,7 +34,7 @@ func (r *Repository) GetDoubtfulTransactionById(assessmentId int64) (dto.Doubtfu
 	var dlTransaction dto.DoubtfulTransactionDTO
 
 	err := r.db.QueryRow(context.Background(),
-		`SELECT transaction_id, risk_score, description, decision FROM doubtful_transaction WHERE assessment_id = $1`, assessmentId,
+		`SELECT transaction_id, risk_score, description, decision FROM "doubtful_transaction" WHERE assessment_id = $1`, assessmentId,
 	).Scan(&dlTransaction.TransactionId, &dlTransaction.RiskScore, &dlTransaction.Description, &dlTransaction.Decision)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -50,7 +50,7 @@ func (r *Repository) GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO,
 	const op = "internal.repository.postgres.doubtful-transaction.GetDoubtfulTransactions"
 
 	rows, err := r.db.Query(context.Background(),
-		`SELECT transaction_id, risk_score, description, decision FROM doubtful_transaction`)
+		`SELECT transaction_id, risk_score, description, decision FROM "doubtful_transaction"`)
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}
@@ -83,7 +83,7 @@ func (r *Repository) DeleteDoubtfulTransactionById(assessmentId int64) error {
 	const op = "internal.repository.postgres.doubtful-transaction.DeleteDoubtfulTransaction"
 
 	res, err := r.db.Exec(context.Background(),
-		`DELETE FROM doubtful_transaction WHERE assessment_id = $1`, assessmentId)
+		`DELETE FROM "doubtful_transaction" WHERE assessment_id = $1`, assessmentId)
 	if err != nil {
 		return fmt.Errorf("%s : %s", op, err)
 	}

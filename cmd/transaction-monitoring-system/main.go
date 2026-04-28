@@ -15,9 +15,11 @@ import (
 	"transaction-monitoring-system/internal/http-server/handler/receive"
 	"transaction-monitoring-system/internal/lib/logger/slog/slogpretty"
 	"transaction-monitoring-system/internal/repository/postgres"
+	admin_service "transaction-monitoring-system/internal/service/admin-service"
 	fraud_service "transaction-monitoring-system/internal/service/fraud-service"
 	manager_service "transaction-monitoring-system/internal/service/manager-service"
 	"transaction-monitoring-system/internal/tcp-server/controller"
+	"transaction-monitoring-system/internal/tcp-server/handler/admin"
 	"transaction-monitoring-system/internal/tcp-server/handler/all"
 	"transaction-monitoring-system/internal/tcp-server/handler/fraud"
 	"transaction-monitoring-system/internal/tcp-server/writers"
@@ -46,6 +48,7 @@ func main() {
 	//init services
 	managerService := manager_service.NewManagerService(log, repository)
 	fraudService := fraud_service.NewFraudService(log, repository)
+	adminService := admin_service.NewAdminService(log, repository)
 
 	// init http && tcp servers
 	wg := &sync.WaitGroup{}
@@ -63,7 +66,7 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err = newTCPServer(sigContext, log, cfg, managerService, fraudService)
+		err = newTCPServer(sigContext, log, cfg, managerService, fraudService, adminService)
 		if err != nil {
 			log.Error("failed in initTCPserver", slog.String("error", err.Error()))
 			return
@@ -108,16 +111,19 @@ func newHttpServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config,
 	return nil
 }
 
-func newTCPServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, mService *manager_service.ManagerService, fService *fraud_service.FraudService) error {
+func newTCPServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, mService *manager_service.ManagerService, fService *fraud_service.FraudService, aService *admin_service.AdminService) error {
 	wr := &writers.ProtobufWriter{}
 	newController := controller.NewController(log, cfg,
-		all.NewRegistrationHandler(log, mService, wr),
+		all.NewManagerRegistrationHandler(log, mService, wr),
 		all.NewAuthenticationHandler(log, cfg, mService, wr),
 		all.NewGetTransactionHandler(log, mService, wr),
 		all.NewGetTransactionsHandler(log, mService, wr),
 		fraud.NewGetDoubtfulTransactionsHandler(log, fService, wr),
 		fraud.NewGetFraudRulesHandler(log, fService, wr),
 		fraud.NewChangeFraudRuleHandler(log, fService, wr),
+		admin.NewFraudRegistrationHandler(log, aService, wr),
+		admin.NewAdminRegistrationHandler(log, aService, wr),
+		admin.NewGetUsersHandler(log, aService, wr),
 	)
 
 	listener, err := net.Listen("tcp", cfg.TCPServer.Address)

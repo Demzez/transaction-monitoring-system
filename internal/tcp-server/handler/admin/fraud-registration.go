@@ -1,4 +1,4 @@
-package all
+package admin
 
 import (
 	"log/slog"
@@ -9,27 +9,23 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Registrator interface {
-	RegisterManager(login string, password string) error
-}
-
-type RegistrationHandler struct {
+type FraudRegistrationHandler struct {
 	log     *slog.Logger
 	service Registrator
 	wr      writers.WrInterface
 }
 
-func NewRegistrationHandler(log *slog.Logger, service Registrator, wr writers.WrInterface) *RegistrationHandler {
-	return &RegistrationHandler{
+func NewFraudRegistrationHandler(log *slog.Logger, service Registrator, wr writers.WrInterface) *FraudRegistrationHandler {
+	return &FraudRegistrationHandler{
 		log:     log,
 		service: service,
 		wr:      wr,
 	}
 }
 
-func (h *RegistrationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
+func (h *FraudRegistrationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 
-	const op = "internal.tcp-server.handler.all.registration.Handle"
+	const op = "internal.tcp-server.handler.admin.admin-registration.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),
@@ -38,13 +34,13 @@ func (h *RegistrationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 
 	var pd protoStruct.ReqRegistration
 	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
-		handlerLog.Error("bad unmarshal payload", slog.String("error", err.Error()))
+		handlerLog.Error("failed to unmarshal payload", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "bad request"); err != nil {
 			handlerLog.Error("failed to response with error", slog.String("error", err.Error()))
 		}
 	}
 
-	err := h.service.RegisterManager(pd.Login, pd.Password)
+	err := h.service.RegisterFraudSpecialist(pd.Login, pd.Password)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
@@ -56,9 +52,9 @@ func (h *RegistrationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
 
-	handlerLog.Info("registration succeed")
+	handlerLog.Info("fraud registration succeed")
 }
 
-func (h *RegistrationHandler) Type() string {
-	return "registration"
+func (h *FraudRegistrationHandler) Type() string {
+	return "fraud-registration"
 }
