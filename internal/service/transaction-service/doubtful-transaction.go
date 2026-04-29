@@ -1,4 +1,4 @@
-package fraud_service
+package transaction_service
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"transaction-monitoring-system/internal/repository"
 )
 
-func (s *FraudService) GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error) {
+func (s *TransactionService) GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error) {
 	dlTransactions, err := s.r.GetAllDoubtfulTransactions()
 	if err != nil {
 		switch {

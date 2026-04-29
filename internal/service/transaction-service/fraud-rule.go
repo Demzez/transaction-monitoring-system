@@ -1,4 +1,4 @@
-package fraud_service
+package transaction_service
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"transaction-monitoring-system/internal/repository"
 )
 
-func (s *FraudService) GetFraudRules() ([]dto.FraudRuleDTO, error) {
+func (s *TransactionService) GetFraudRules() ([]dto.FraudRuleDTO, error) {
 	rules, err := s.r.GetAllFraudRules()
 	if err != nil {
 		switch {
@@ -17,11 +17,11 @@ func (s *FraudService) GetFraudRules() ([]dto.FraudRuleDTO, error) {
 			s.log.Error("failed to get fraud-rule", slog.String("error", err.Error()))
 		}
 	}
-
+	
 	return rules, err
 }
 
-func (s *FraudService) ChangeFraudRule(rule dto.FraudRuleDTO) error {
+func (s *TransactionService) ChangeFraudRule(rule dto.FraudRuleDTO) error {
 	//TODO: дописать бизнес логику и проверки для некорректных данных
 	err := s.r.UpdateFraudRule(rule)
 	if err != nil {
@@ -32,6 +32,6 @@ func (s *FraudService) ChangeFraudRule(rule dto.FraudRuleDTO) error {
 			s.log.Error("failed to update fraud-rule", slog.String("error", err.Error()))
 		}
 	}
-
+	
 	return err
 }

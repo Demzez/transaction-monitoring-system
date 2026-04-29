@@ -15,9 +15,8 @@ import (
 	"transaction-monitoring-system/internal/http-server/handler/receive"
 	"transaction-monitoring-system/internal/lib/logger/slog/slogpretty"
 	"transaction-monitoring-system/internal/repository/postgres"
-	admin_service "transaction-monitoring-system/internal/service/admin-service"
-	fraud_service "transaction-monitoring-system/internal/service/fraud-service"
-	manager_service "transaction-monitoring-system/internal/service/manager-service"
+	transaction_service "transaction-monitoring-system/internal/service/transaction-service"
+	user_service "transaction-monitoring-system/internal/service/user-service"
 	"transaction-monitoring-system/internal/tcp-server/controller"
 	"transaction-monitoring-system/internal/tcp-server/handler/admin"
 	"transaction-monitoring-system/internal/tcp-server/handler/all"
@@ -46,9 +45,8 @@ func main() {
 	log.Info("database is connected", slog.String("connection_pool", repository.Statistic()))
 
 	//init services
-	managerService := manager_service.NewManagerService(log, repository)
-	fraudService := fraud_service.NewFraudService(log, repository)
-	adminService := admin_service.NewAdminService(log, repository)
+	transactionService := transaction_service.NewTransactionService(log, repository)
+	userService := user_service.NewUserService(log, repository)
 
 	// init http && tcp servers
 	wg := &sync.WaitGroup{}
@@ -56,7 +54,7 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err = newHttpServer(sigContext, log, cfg, fraudService)
+		err = newHttpServer(sigContext, log, cfg, transactionService)
 		if err != nil {
 			log.Error("failed in initHTTPserver", slog.String("error", err.Error()))
 			return
@@ -66,7 +64,7 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err = newTCPServer(sigContext, log, cfg, managerService, fraudService, adminService)
+		err = newTCPServer(sigContext, log, cfg, transactionService, userService)
 		if err != nil {
 			log.Error("failed in initTCPserver", slog.String("error", err.Error()))
 			return
@@ -78,9 +76,9 @@ func main() {
 	log.Info("----------------------graceful shutdown is completed----------------------")
 }
 
-func newHttpServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, fService *fraud_service.FraudService) error {
+func newHttpServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, tService *transaction_service.TransactionService) error {
 	muxRouter := http.NewServeMux()
-	muxRouter.HandleFunc("POST /send", receive.New(fService))
+	muxRouter.HandleFunc("POST /send", receive.New(tService))
 
 	srv := &http.Server{
 		Addr:         cfg.HTTPServer.Address,
@@ -111,20 +109,20 @@ func newHttpServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config,
 	return nil
 }
 
-func newTCPServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, mService *manager_service.ManagerService, fService *fraud_service.FraudService, aService *admin_service.AdminService) error {
+func newTCPServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, tService *transaction_service.TransactionService, uService *user_service.UserService) error {
 	wr := &writers.ProtobufWriter{}
 	newController := controller.NewController(log, cfg,
-		all.NewManagerRegistrationHandler(log, mService, wr),
-		all.NewAuthenticationHandler(log, cfg, mService, wr),
-		all.NewGetTransactionHandler(log, mService, wr),
-		all.NewGetTransactionsHandler(log, mService, wr),
-		fraud.NewGetDoubtfulTransactionsHandler(log, fService, wr),
-		fraud.NewGetFraudRulesHandler(log, fService, wr),
-		fraud.NewChangeFraudRuleHandler(log, fService, wr),
-		admin.NewFraudRegistrationHandler(log, aService, wr),
-		admin.NewAdminRegistrationHandler(log, aService, wr),
-		admin.NewGetUsersHandler(log, aService, wr),
-		admin.NewDeleteUserHandler(log, aService, wr),
+		all.NewManagerRegistrationHandler(log, uService, wr),
+		all.NewAuthenticationHandler(log, cfg, uService, wr),
+		all.NewGetTransactionHandler(log, tService, wr),
+		all.NewGetTransactionsHandler(log, tService, wr),
+		fraud.NewGetDoubtfulTransactionsHandler(log, tService, wr),
+		fraud.NewGetFraudRulesHandler(log, tService, wr),
+		fraud.NewChangeFraudRuleHandler(log, tService, wr),
+		admin.NewFraudRegistrationHandler(log, uService, wr),
+		admin.NewAdminRegistrationHandler(log, uService, wr),
+		admin.NewGetUsersHandler(log, uService, wr),
+		admin.NewDeleteUserHandler(log, uService, wr),
 	)
 
 	listener, err := net.Listen("tcp", cfg.TCPServer.Address)

@@ -1,4 +1,4 @@
-package fraud_service
+package transaction_service
 
 import (
 	"log/slog"
@@ -7,21 +7,23 @@ import (
 
 type RepositoryInterface interface {
 	CreateTransaction(transaction dto.TransactionDTO) (int64, error)
+	GetTransactionById(id int64) (dto.TransactionDTO, error)
+	GetAllTransactions() ([]dto.TransactionDTO, error)
 	CreateDoubtfulTransaction(dlTransaction dto.DoubtfulTransactionDTO) error
 	GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
 	GetActiveFraudRules() ([]dto.FraudRuleDTO, error)
 	GetAllFraudRules() ([]dto.FraudRuleDTO, error)
 	UpdateFraudRule(rule dto.FraudRuleDTO) error
 }
-type FraudService struct {
+type TransactionService struct {
 	log *slog.Logger
 	r   RepositoryInterface
 }
 
-func NewFraudService(log *slog.Logger, r RepositoryInterface) *FraudService {
-	const op = "internal.service.fraud-service"
+func NewTransactionService(log *slog.Logger, r RepositoryInterface) *TransactionService {
+	const op = "internal.service.transaction-service"
 
-	return &FraudService{
+	return &TransactionService{
 		log: log.With(slog.String("op", op)),
 		r:   r,
 	}

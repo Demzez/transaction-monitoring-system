@@ -1,4 +1,4 @@
-package manager_service
+package user_service
 
 import (
 	"log/slog"
@@ -8,19 +8,19 @@ import (
 
 type RepositoryInterface interface {
 	Authenticate(username, password string) (int64, error)
-	GetTransactionById(int64) (dto.TransactionDTO, error)
-	GetAllTransactions() ([]dto.TransactionDTO, error)
 	Register(login string, password string, role int, createdAt time.Time) error
+	GetAllUsers() ([]dto.UserDTO, error)
+	DeleteUserById(userId int64) error
 }
-type ManagerService struct {
+type UserService struct {
 	log *slog.Logger
 	r   RepositoryInterface
 }
 
-func NewManagerService(log *slog.Logger, r RepositoryInterface) *ManagerService {
-	const op = "internal.service.manager-service"
+func NewUserService(log *slog.Logger, r RepositoryInterface) *UserService {
+	const op = "internal.service.user-service"
 
-	return &ManagerService{
+	return &UserService{
 		log: log.With(slog.String("op", op)),
 		r:   r,
 	}

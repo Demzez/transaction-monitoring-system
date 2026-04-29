@@ -1,4 +1,4 @@
-package fraud_service
+package transaction_service
 
 import (
 	"errors"
@@ -110,7 +110,7 @@ func evaluateRule(rule dto.FraudRuleDTO, t dto.TransactionDTO) (bool, error) {
 	return false, fmt.Errorf("field %q is not supported yet", rule.FieldName)
 }
 
-func (s *FraudService) Control(transaction dto.TransactionDTO) error {
+func (s *TransactionService) Control(transaction dto.TransactionDTO) error {
 
 	rules, err := s.r.GetActiveFraudRules()
 	if err != nil {

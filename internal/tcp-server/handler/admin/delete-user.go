@@ -5,7 +5,7 @@ import (
 	"net"
 	"transaction-monitoring-system/internal/tcp-server/writers"
 	"transaction-monitoring-system/protoStruct"
-	
+
 	"google.golang.org/protobuf/proto"
 )
 
@@ -29,12 +29,12 @@ func NewDeleteUserHandler(log *slog.Logger, service Deleter, wr writers.WrInterf
 
 func (h *DeleteUserHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 	const op = "internal.tcp-server.handler.admin.delete-user.Handle"
-	
+
 	handlerLog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
-	
+
 	var pd protoStruct.ReqUser
 	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
 		handlerLog.Error("failed to unmarshal payload", slog.String("error", err.Error()))
@@ -43,7 +43,7 @@ func (h *DeleteUserHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 		}
 		return
 	}
-	
+
 	err := h.service.DeleteUser(pd.UserId)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
@@ -51,12 +51,12 @@ func (h *DeleteUserHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 		}
 		return
 	}
-	
+
 	data := make([]byte, 0)
 	if err = h.wr.WriteResponse(conn, data); err != nil {
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
-	
+
 	handlerLog.Info("user successfully deleted")
 }
 

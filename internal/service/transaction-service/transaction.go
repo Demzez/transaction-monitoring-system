@@ -1,4 +1,4 @@
-package manager_service
+package transaction_service
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"transaction-monitoring-system/internal/repository"
 )
 
-func (s *ManagerService) GetTransaction(transactionId int64) (dto.TransactionDTO, error) {
+func (s *TransactionService) GetTransaction(transactionId int64) (dto.TransactionDTO, error) {
 	if transactionId == 0 {
 		s.log.Error("transaction_id is a required", slog.String("error", "invalid transaction id"))
 		return dto.TransactionDTO{}, fmt.Errorf("invalid transaction id")
@@ -29,7 +29,7 @@ func (s *ManagerService) GetTransaction(transactionId int64) (dto.TransactionDTO
 	return transactionDTO, err
 }
 
-func (s *ManagerService) GetTransactions() ([]dto.TransactionDTO, error) {
+func (s *TransactionService) GetTransactions() ([]dto.TransactionDTO, error) {
 	transactions, err := s.r.GetAllTransactions()
 	if err != nil {
 		switch {
