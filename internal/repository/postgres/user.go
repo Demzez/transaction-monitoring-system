@@ -98,3 +98,18 @@ func (r *Repository) GetAllUsers() ([]dto.UserDTO, error) {
 	}
 	return users, nil
 }
+
+func (r *Repository) DeleteUserById(userId int64) error {
+	const op = "internal.repository.postgres.user.DeleteUserById"
+
+	res, err := r.db.Exec(context.Background(),
+		`DELETE FROM "user" WHERE user_id = $1`, userId)
+	if err != nil {
+		return fmt.Errorf("%s : %s", op, err)
+	}
+	if res.RowsAffected() == 0 {
+		return fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
+	}
+
+	return nil
+}

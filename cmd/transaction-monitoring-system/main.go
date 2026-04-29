@@ -124,6 +124,7 @@ func newTCPServer(sigCtx context.Context, log *slog.Logger, cfg *config.Config, 
 		admin.NewFraudRegistrationHandler(log, aService, wr),
 		admin.NewAdminRegistrationHandler(log, aService, wr),
 		admin.NewGetUsersHandler(log, aService, wr),
+		admin.NewDeleteUserHandler(log, aService, wr),
 	)
 
 	listener, err := net.Listen("tcp", cfg.TCPServer.Address)

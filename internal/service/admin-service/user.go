@@ -54,3 +54,17 @@ func (s *AdminService) GetUsers() ([]dto.UserDTO, error) {
 
 	return transactions, err
 }
+
+func (s *AdminService) DeleteUser(userId int64) error {
+	err := s.r.DeleteUserById(userId)
+	if err != nil {
+		switch {
+		case errors.Is(err, repository.ErrRecordNotFound):
+			s.log.Warn("record not found", slog.String("extra", err.Error()))
+		default:
+			s.log.Error("failed to get users", slog.String("error", err.Error()))
+		}
+	}
+
+	return nil
+}

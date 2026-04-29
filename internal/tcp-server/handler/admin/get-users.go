@@ -63,7 +63,7 @@ func (h *GetUsersHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
 
-	handlerLog.Info("transactions successfully sent")
+	handlerLog.Info("users successfully sent")
 }
 
 func (h *GetUsersHandler) Type() string {

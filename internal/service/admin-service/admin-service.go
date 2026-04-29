@@ -9,6 +9,7 @@ import (
 type RepositoryInterface interface {
 	Register(login string, password string, role int, createdAt time.Time) error
 	GetAllUsers() ([]dto.UserDTO, error)
+	DeleteUserById(userId int64) error
 }
 type AdminService struct {
 	log *slog.Logger
