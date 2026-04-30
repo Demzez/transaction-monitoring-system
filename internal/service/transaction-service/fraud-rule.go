@@ -17,7 +17,7 @@ func (s *TransactionService) GetFraudRules() ([]dto.FraudRuleDTO, error) {
 			s.log.Error("failed to get fraud-rule", slog.String("error", err.Error()))
 		}
 	}
-	
+
 	return rules, err
 }
 
@@ -32,6 +32,6 @@ func (s *TransactionService) ChangeFraudRule(rule dto.FraudRuleDTO) error {
 			s.log.Error("failed to update fraud-rule", slog.String("error", err.Error()))
 		}
 	}
-	
+
 	return err
 }

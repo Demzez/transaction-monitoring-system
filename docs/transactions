@@ -1,0 +1,16 @@
+Transaction in database:
+- transaction_id : уникальный индификатор транзакции
+- hash : реквизиты, пароли и зашифрованные данные, необходимые для перевода(расшифровываються на следующих сервисах)
+- source : источник транзакции в формате "BY-|-29472640265381639572"
+- amount : целочисленная сумма, выраженная в копейках "10000"(100 BYN) 
+- direction : направление транзакции в формате "RU-|-29472642265381539572"
+- status : статус транзакции "pending / approved / rejected"
+- created_at : время получения транзакции, в формате TIMESTAMPTZ
+- updated_at : время изменения статуса, если это было необходимо, в формате TIMESTAMPTZ
+
+Doubtful transactions:
+- assessment_id :
+- transaction_id :
+- risk_score :
+- description :
+- decision :

@@ -16,6 +16,12 @@ const (
 	Block    string = "block"
 )
 
+const (
+	Approved string = "approved"
+	Pending  string = "pending"
+	Rejected string = "rejected"
+)
+
 func inOutList(target string, operator string, listValue string) (bool, error) {
 	list := strings.Split(listValue, ",")
 	inList := false
@@ -34,38 +40,48 @@ func inOutList(target string, operator string, listValue string) (bool, error) {
 	return false, fmt.Errorf("unsupported operator %q for field source", operator)
 }
 
-func assessmentRisk(riskScore int64) string {
-	var decision string
+func like(str, subStr string) (bool, error) {
+	return strings.Contains(str, subStr), nil
+}
+
+func assessmentRisk(riskScore int64) (string, string) {
+	var (
+		decision string
+		status   string
+	)
 	switch {
-	case riskScore < 50:
+	case riskScore < 20:
 		decision = Innocent
+		status = Approved
 	case riskScore < 80:
 		decision = Review
+		status = Pending
 	default:
 		decision = Block
+		status = Rejected
 	}
-
-	return decision
+	
+	return decision, status
 }
 
 func checkRules(rules []dto.FraudRuleDTO, transaction dto.TransactionDTO) (riskScore int64, description string, err error) {
 	var descriptions []string
-
+	
 	for _, rule := range rules {
 		matches, evalErr := evaluateRule(rule, transaction)
 		if evalErr != nil {
 			return 0, "", fmt.Errorf("failed to evaluate rule %s, with rule %s", rule.Name, evalErr.Error())
 		}
-
+		
 		if matches {
 			riskScore += rule.AddRisk
 			descriptions = append(descriptions,
 				fmt.Sprintf("add_risk: %s (%s %s %s); \n", rule.Name, rule.FieldName, rule.Operator, rule.Value))
 		}
 	}
-
+	
 	description = strings.Join(descriptions, "")
-
+	
 	return riskScore, description, nil
 }
 
@@ -79,7 +95,7 @@ func evaluateRule(rule dto.FraudRuleDTO, t dto.TransactionDTO) (bool, error) {
 		if err != nil {
 			return false, fmt.Errorf("invalid numeric value for amount: %w", err)
 		}
-
+		
 		switch rule.Operator {
 		case ">":
 			return t.Amount > ruleVal, nil
@@ -88,15 +104,17 @@ func evaluateRule(rule dto.FraudRuleDTO, t dto.TransactionDTO) (bool, error) {
 		default:
 			return false, fmt.Errorf("unsupported operator %q for field amount", rule.Operator)
 		}
-
+	
 	case "source":
 		switch rule.Operator {
 		case "=":
 			return t.Source == rule.Value, nil
 		case "in", "not_in":
 			return inOutList(t.Source, rule.Operator, rule.Value)
+		case "like":
+			return like(t.Source, rule.Value)
 		}
-
+	
 	case "direction":
 		// аналогично source
 		switch rule.Operator {
@@ -104,14 +122,16 @@ func evaluateRule(rule dto.FraudRuleDTO, t dto.TransactionDTO) (bool, error) {
 			return t.Direction == rule.Value, nil
 		case "in", "not_in":
 			return inOutList(t.Direction, rule.Operator, rule.Value)
+		case "like":
+			return like(t.Direction, rule.Value)
 		}
 	}
-
+	
 	return false, fmt.Errorf("field %q is not supported yet", rule.FieldName)
 }
 
 func (s *TransactionService) Control(transaction dto.TransactionDTO) error {
-
+	
 	rules, err := s.r.GetActiveFraudRules()
 	if err != nil {
 		switch {
@@ -122,15 +142,15 @@ func (s *TransactionService) Control(transaction dto.TransactionDTO) error {
 		}
 		return err
 	}
-
+	
 	riskScore, description, err := checkRules(rules, transaction)
 	if err != nil {
 		s.log.Error("failed to check rules", slog.String("error", err.Error()))
 		return err
 	}
-	decision := assessmentRisk(riskScore)
-
-	transaction.Status = decision
+	decision, status := assessmentRisk(riskScore)
+	
+	transaction.Status = status
 	tId, err := s.r.CreateTransaction(transaction)
 	if err != nil {
 		switch {
@@ -141,7 +161,7 @@ func (s *TransactionService) Control(transaction dto.TransactionDTO) error {
 		}
 		return err
 	}
-
+	
 	if decision != Innocent {
 		doubtfulTransaction := dto.DoubtfulTransactionDTO{
 			TransactionId: tId,
@@ -160,12 +180,12 @@ func (s *TransactionService) Control(transaction dto.TransactionDTO) error {
 			return err
 		}
 	}
-
+	
 	s.log.Info("transaction successfully saved",
 		slog.String("hash", transaction.Hash),
 		slog.Int64("risk_score", riskScore),
 		slog.String("decision", decision))
-
+	
 	return nil
 }
 

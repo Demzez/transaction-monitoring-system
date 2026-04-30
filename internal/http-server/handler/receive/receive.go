@@ -1,11 +1,11 @@
-package receive //TODO: придумать другое название, скорее всего это будет handler, дальше service(в котором будет лежать логика антифрода), ну и репозиторий
+package receive
 
 import (
 	"encoding/json"
 	"net/http"
 	"time"
 	"transaction-monitoring-system/internal/dto"
-
+	
 	"github.com/go-playground/validator/v10"
 )
 
@@ -27,15 +27,15 @@ func New(fService FraudService) http.HandlerFunc {
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			http.Error(w, "failed to decode request body", http.StatusBadRequest)
-
+			
 			return
 		}
 		if err = validator.New().Struct(req); err != nil {
 			http.Error(w, "failed to validate request", http.StatusBadRequest)
-
+			
 			return
 		}
-
+		
 		transaction := dto.TransactionDTO{
 			Hash:      req.Hash,
 			Source:    req.Source,
@@ -45,11 +45,11 @@ func New(fService FraudService) http.HandlerFunc {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-
+		
 		err = fService.Control(transaction)
 		if err != nil {
 			http.Error(w, "failed to save transaction", http.StatusInternalServerError)
-
+			
 			return
 		}
 	}
