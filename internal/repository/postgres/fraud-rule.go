@@ -117,3 +117,18 @@ func (r *Repository) GetActiveFraudRules() ([]dto.FraudRuleDTO, error) {
 	}
 	return rules, nil
 }
+
+func (r *Repository) DeleteFraudRuleById(ruleId int64) error {
+	const op = "internal.repository.postgres.user.DeleteUserById"
+
+	res, err := r.db.Exec(context.Background(),
+		`DELETE FROM "fraud_rule" WHERE rule_id = $1`, ruleId)
+	if err != nil {
+		return fmt.Errorf("%s : %s", op, err)
+	}
+	if res.RowsAffected() == 0 {
+		return fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
+	}
+
+	return nil
+}

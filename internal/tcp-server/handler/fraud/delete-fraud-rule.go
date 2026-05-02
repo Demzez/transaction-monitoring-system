@@ -1,4 +1,4 @@
-package admin
+package fraud
 
 import (
 	"log/slog"
@@ -9,38 +9,42 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type FraudRegistrationHandler struct {
+type Deleter interface {
+	DeleteFraudRule(ruleId int64) error
+}
+
+type DeleteFraudRuleHandler struct {
 	log     *slog.Logger
-	service Registrator
+	service Deleter
 	wr      writers.WrInterface
 }
 
-func NewFraudRegistrationHandler(log *slog.Logger, service Registrator, wr writers.WrInterface) *FraudRegistrationHandler {
-	return &FraudRegistrationHandler{
+func NewDeleteUserHandler(log *slog.Logger, service Deleter, wr writers.WrInterface) *DeleteFraudRuleHandler {
+	return &DeleteFraudRuleHandler{
 		log:     log,
 		service: service,
 		wr:      wr,
 	}
 }
 
-func (h *FraudRegistrationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
-
-	const op = "internal.tcp-server.handler.admin.fraud-registration.Handle"
+func (h *DeleteFraudRuleHandler) Handle(conn net.Conn, req *protoStruct.Request) {
+	const op = "internal.tcp-server.handler.fraud.delete-fraud-rule.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	var pd protoStruct.ReqRegistration
+	var pd protoStruct.ReqFraudRule
 	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
 		handlerLog.Error("failed to unmarshal payload", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "bad request"); err != nil {
-			handlerLog.Error("failed to response with error", slog.String("error", err.Error()))
+			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
 		}
+		return
 	}
 
-	err := h.service.RegisterFraudSpecialist(pd.Login, pd.Password)
+	err := h.service.DeleteFraudRule(pd.RuleId)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
@@ -48,13 +52,12 @@ func (h *FraudRegistrationHandler) Handle(conn net.Conn, req *protoStruct.Reques
 		return
 	}
 
-	if err = h.wr.WriteResponse(conn, make([]byte, 0)); err != nil {
+	data := make([]byte, 0)
+	if err = h.wr.WriteResponse(conn, data); err != nil {
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
 
-	handlerLog.Info("fraud registration succeed")
+	handlerLog.Info("fraud-rule successfully deleted")
 }
 
-func (h *FraudRegistrationHandler) Type() string {
-	return "fraud-registration"
-}
+func (h *DeleteFraudRuleHandler) Type() string { return "delete-fraud-rule" }

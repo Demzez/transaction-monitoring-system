@@ -14,6 +14,8 @@ type RepositoryInterface interface {
 	GetActiveFraudRules() ([]dto.FraudRuleDTO, error)
 	GetAllFraudRules() ([]dto.FraudRuleDTO, error)
 	UpdateFraudRule(rule dto.FraudRuleDTO) error
+	CreateFraudRule(rule dto.FraudRuleDTO) error
+	DeleteFraudRuleById(ruleId int64) error
 }
 type TransactionService struct {
 	log *slog.Logger

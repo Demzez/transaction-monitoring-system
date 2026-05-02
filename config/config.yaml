@@ -13,4 +13,4 @@ http_server:
   idle_timeout: "60s" 
 tcp_server:
     address: "localhost:8084"
-    idle_timeout: "60s"
+    idle_timeout: "600s"

@@ -1,38 +1,43 @@
-package admin
+package fraud
 
 import (
 	"log/slog"
 	"net"
+	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/tcp-server/writers"
 	"transaction-monitoring-system/protoStruct"
 
 	"google.golang.org/protobuf/proto"
 )
 
-type FraudRegistrationHandler struct {
+type Creator interface {
+	CreateFraudRule(rule dto.FraudRuleDTO) error
+}
+
+type CreateFraudRuleHandler struct {
 	log     *slog.Logger
-	service Registrator
+	service Creator
 	wr      writers.WrInterface
 }
 
-func NewFraudRegistrationHandler(log *slog.Logger, service Registrator, wr writers.WrInterface) *FraudRegistrationHandler {
-	return &FraudRegistrationHandler{
+func NewCreateFraudRuleHandler(log *slog.Logger, service Creator, wr writers.WrInterface) *CreateFraudRuleHandler {
+	return &CreateFraudRuleHandler{
 		log:     log,
 		service: service,
 		wr:      wr,
 	}
 }
 
-func (h *FraudRegistrationHandler) Handle(conn net.Conn, req *protoStruct.Request) {
+func (h *CreateFraudRuleHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 
-	const op = "internal.tcp-server.handler.admin.fraud-registration.Handle"
+	const op = "internal.tcp-server.handler.fraud.create-fraud-rule.Handle"
 
 	handlerLog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	var pd protoStruct.ReqRegistration
+	var pd protoStruct.ReqChangeFraudRule
 	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
 		handlerLog.Error("failed to unmarshal payload", slog.String("error", err.Error()))
 		if err = h.wr.WriteError(conn, "bad request"); err != nil {
@@ -40,7 +45,17 @@ func (h *FraudRegistrationHandler) Handle(conn net.Conn, req *protoStruct.Reques
 		}
 	}
 
-	err := h.service.RegisterFraudSpecialist(pd.Login, pd.Password)
+	rule := dto.FraudRuleDTO{
+		RuleID:    pd.RuleId,
+		Name:      pd.Name,
+		Active:    pd.Active,
+		FieldName: pd.FieldName,
+		Operator:  pd.Operator,
+		Value:     pd.Value,
+		AddRisk:   pd.AddRisk,
+	}
+
+	err := h.service.CreateFraudRule(rule)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
@@ -52,9 +67,9 @@ func (h *FraudRegistrationHandler) Handle(conn net.Conn, req *protoStruct.Reques
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
 
-	handlerLog.Info("fraud registration succeed")
+	handlerLog.Info("create fraud-rule succeed")
 }
 
-func (h *FraudRegistrationHandler) Type() string {
-	return "fraud-registration"
+func (h *CreateFraudRuleHandler) Type() string {
+	return "create-fraud-rule"
 }
