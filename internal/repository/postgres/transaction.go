@@ -6,15 +6,16 @@ import (
 	"fmt"
 	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/repository"
-
+	search_query "transaction-monitoring-system/internal/repository/postgres/search-query"
+	
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func (r *Repository) CreateTransaction(transaction dto.TransactionDTO) (int64, error) {
-
+	
 	const op = "internal.repository.postgres.transaction.CreateTransaction"
-
+	
 	var transactionId int64
 	err := r.db.QueryRow(context.Background(),
 		`INSERT INTO "transaction" (hash, source, amount, direction, status, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING transaction_id`,
@@ -26,16 +27,16 @@ func (r *Repository) CreateTransaction(transaction dto.TransactionDTO) (int64, e
 		}
 		return 0, fmt.Errorf("%s : %s", op, err)
 	}
-
+	
 	return transactionId, nil
 }
 
 func (r *Repository) GetTransactionById(transactionId int64) (dto.TransactionDTO, error) {
-
+	
 	const op = "internal.repository.postgres.transaction.GetTransaction"
-
+	
 	var transaction dto.TransactionDTO
-
+	
 	err := r.db.QueryRow(context.Background(),
 		`SELECT transaction_id, hash, source, amount, direction, status, created_at, updated_at FROM "transaction" WHERE transaction_id = $1`, transactionId,
 	).Scan(&transaction.TransactionId, &transaction.Hash, &transaction.Source, &transaction.Amount, &transaction.Direction, &transaction.Status, &transaction.CreatedAt, &transaction.UpdatedAt)
@@ -45,20 +46,28 @@ func (r *Repository) GetTransactionById(transactionId int64) (dto.TransactionDTO
 		}
 		return transaction, fmt.Errorf("%s : %s", op, err)
 	}
-
+	
 	return transaction, nil
 }
 
-func (r *Repository) GetAllTransactions() ([]dto.TransactionDTO, error) {
+func (r *Repository) GetAllTransactions(key string) ([]dto.TransactionDTO, error) {
 	const op = "internal.repository.postgres.transaction.GetAllTransactions"
-
-	rows, err := r.db.Query(context.Background(),
-		`SELECT transaction_id, hash, source, amount, direction, status, created_at, updated_at FROM "transaction"`)
+	
+	query, like := search_query.BuildTransactionQuery(key)
+	
+	var rows pgx.Rows
+	var err error
+	
+	if like == "" {
+		rows, err = r.db.Query(context.Background(), query)
+	} else {
+		rows, err = r.db.Query(context.Background(), query, like)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}
 	defer rows.Close()
-
+	
 	var transactions []dto.TransactionDTO
 	for rows.Next() {
 		var transaction dto.TransactionDTO
@@ -76,7 +85,7 @@ func (r *Repository) GetAllTransactions() ([]dto.TransactionDTO, error) {
 		}
 		transactions = append(transactions, transaction)
 	}
-
+	
 	if err = rows.Err(); err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}
@@ -88,7 +97,7 @@ func (r *Repository) GetAllTransactions() ([]dto.TransactionDTO, error) {
 
 func (r *Repository) UpdateTransactionStatusById(transactionId int64, status string) error {
 	const op = "internal.repository.postgres.doubtful-transaction.UpdateStatusById"
-
+	
 	result, err := r.db.Exec(context.Background(),
 		`UPDATE "transaction" SET status = $2 WHERE transaction_id = $1`, transactionId, status)
 	if err != nil {
@@ -97,13 +106,13 @@ func (r *Repository) UpdateTransactionStatusById(transactionId int64, status str
 	if result.RowsAffected() == 0 {
 		return fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
 	}
-
+	
 	return nil
 }
 
 func (r *Repository) DeleteTransactionByHash(transactionHash string) error {
 	const op = "internal.repository.postgres.transaction.DeleteTransaction"
-
+	
 	res, err := r.db.Exec(context.Background(),
 		`DELETE FROM "transaction" WHERE hash = $1`, transactionHash)
 	if err != nil {
@@ -112,6 +121,6 @@ func (r *Repository) DeleteTransactionByHash(transactionHash string) error {
 	if res.RowsAffected() == 0 {
 		return fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
 	}
-
+	
 	return nil
 }

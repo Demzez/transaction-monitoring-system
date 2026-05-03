@@ -290,6 +290,7 @@ func (x *RespTransaction) GetUpdatedAt() int64 {
 
 type ReqTransactionList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -322,6 +323,13 @@ func (x *ReqTransactionList) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ReqTransactionList.ProtoReflect.Descriptor instead.
 func (*ReqTransactionList) Descriptor() ([]byte, []int) {
 	return file_protoStruct_messages_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ReqTransactionList) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
 }
 
 type RespTransactionList struct {
@@ -483,6 +491,7 @@ func (x *RespDoubtfulTransaction) GetDecision() string {
 
 type ReqDoubtfulTransactionList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -515,6 +524,13 @@ func (x *ReqDoubtfulTransactionList) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ReqDoubtfulTransactionList.ProtoReflect.Descriptor instead.
 func (*ReqDoubtfulTransactionList) Descriptor() ([]byte, []int) {
 	return file_protoStruct_messages_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ReqDoubtfulTransactionList) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
 }
 
 type RespDoubtfulTransactionList struct {
@@ -704,6 +720,7 @@ func (x *ReqRegistration) GetPassword() string {
 
 type RespRegistration struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -736,6 +753,13 @@ func (x *RespRegistration) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RespRegistration.ProtoReflect.Descriptor instead.
 func (*RespRegistration) Descriptor() ([]byte, []int) {
 	return file_protoStruct_messages_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *RespRegistration) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
 }
 
 type ReqAuthentication struct {
@@ -1137,6 +1161,7 @@ func (x *RespFraudRule) GetAddRisk() int64 {
 
 type ReqFraudRuleList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1169,6 +1194,13 @@ func (x *ReqFraudRuleList) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ReqFraudRuleList.ProtoReflect.Descriptor instead.
 func (*ReqFraudRuleList) Descriptor() ([]byte, []int) {
 	return file_protoStruct_messages_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ReqFraudRuleList) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
 }
 
 type RespFraudRuleList struct {
@@ -1368,8 +1400,9 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\a \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\b \x01(\x03R\tupdatedAt\"\x14\n" +
-	"\x12ReqTransactionList\"T\n" +
+	"updated_at\x18\b \x01(\x03R\tupdatedAt\"&\n" +
+	"\x12ReqTransactionList\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\"T\n" +
 	"\x13RespTransactionList\x12=\n" +
 	"\ftransactions\x18\x01 \x03(\v2\x19.messages.RespTransactionR\ftransactions\"=\n" +
 	"\x16ReqDoubtfulTransaction\x12#\n" +
@@ -1379,8 +1412,9 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\n" +
 	"risk_score\x18\x02 \x01(\x03R\triskScore\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1a\n" +
-	"\bdecision\x18\x04 \x01(\tR\bdecision\"\x1c\n" +
-	"\x1aReqDoubtfulTransactionList\"u\n" +
+	"\bdecision\x18\x04 \x01(\tR\bdecision\".\n" +
+	"\x1aReqDoubtfulTransactionList\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\"u\n" +
 	"\x1bRespDoubtfulTransactionList\x12V\n" +
 	"\x15doubtful_transactions\x18\x01 \x03(\v2!.messages.RespDoubtfulTransactionR\x14doubtfulTransactions\"V\n" +
 	"\x11ReqChangeDecision\x12%\n" +
@@ -1389,8 +1423,9 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\x12RespChangeDecision\"C\n" +
 	"\x0fReqRegistration\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x12\n" +
-	"\x10RespRegistration\"E\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"$\n" +
+	"\x10RespRegistration\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\"E\n" +
 	"\x11ReqAuthentication\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"I\n" +
@@ -1417,8 +1452,9 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"field_name\x18\x04 \x01(\tR\tfieldName\x12\x1a\n" +
 	"\boperator\x18\x05 \x01(\tR\boperator\x12\x14\n" +
 	"\x05value\x18\x06 \x01(\tR\x05value\x12\x19\n" +
-	"\badd_risk\x18\a \x01(\x03R\aaddRisk\"\x12\n" +
-	"\x10ReqFraudRuleList\"M\n" +
+	"\badd_risk\x18\a \x01(\x03R\aaddRisk\"$\n" +
+	"\x10ReqFraudRuleList\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\"M\n" +
 	"\x11RespFraudRuleList\x128\n" +
 	"\vfraud_rules\x18\x01 \x03(\v2\x17.messages.RespFraudRuleR\n" +
 	"fraudRules\"\xc5\x01\n" +

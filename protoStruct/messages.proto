@@ -33,7 +33,7 @@ message RespTransaction {
   int64 updated_at = 8;
 }
 message ReqTransactionList {
-  // empty slice of byte
+  string key = 1;
 }
 message RespTransactionList{
   repeated RespTransaction transactions = 1;
@@ -51,7 +51,7 @@ message RespDoubtfulTransaction {
 }
 
 message ReqDoubtfulTransactionList {
-  // empty slice of byte
+  string key = 1;
 }
 message RespDoubtfulTransactionList {
   repeated RespDoubtfulTransaction doubtful_transactions = 1;
@@ -71,7 +71,7 @@ message ReqRegistration {
   string password = 2;
 }
 message RespRegistration {
- // empty slice of byte
+ string key = 1;
 }
 message ReqAuthentication {
   string login = 1;
@@ -111,7 +111,7 @@ message RespFraudRule {
 }
 
 message ReqFraudRuleList {
-  // empty slice of byte
+  string key = 1;
 }
 
 message RespFraudRuleList {
