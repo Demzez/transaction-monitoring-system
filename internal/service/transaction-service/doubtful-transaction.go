@@ -18,6 +18,16 @@ func (s *TransactionService) GetDoubtfulTransactions() ([]dto.DoubtfulTransactio
 		}
 	}
 
+	delErr := s.r.DeleteDoubtfulTransactionByDecision(Innocent)
+	if err != nil {
+		switch {
+		case errors.Is(delErr, repository.ErrRecordNotFound):
+			s.log.Info("nothing to delete", slog.String("extra", delErr.Error()))
+		default:
+			s.log.Error("failed to delete doubtful_transactions", slog.String("error", delErr.Error()))
+		}
+	}
+
 	return dlTransactions, err
 }
 

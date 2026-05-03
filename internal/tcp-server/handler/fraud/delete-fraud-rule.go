@@ -19,7 +19,7 @@ type DeleteFraudRuleHandler struct {
 	wr      writers.WrInterface
 }
 
-func NewDeleteUserHandler(log *slog.Logger, service Deleter, wr writers.WrInterface) *DeleteFraudRuleHandler {
+func NewDeleteFraudRuleHandler(log *slog.Logger, service Deleter, wr writers.WrInterface) *DeleteFraudRuleHandler {
 	return &DeleteFraudRuleHandler{
 		log:     log,
 		service: service,

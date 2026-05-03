@@ -14,6 +14,7 @@ type RepositoryInterface interface {
 	UpdateDecisionByTrId(transactionId int64, decision string) error
 	GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
 	GetActiveFraudRules() ([]dto.FraudRuleDTO, error)
+	DeleteDoubtfulTransactionByDecision(decision string) error
 	GetAllFraudRules() ([]dto.FraudRuleDTO, error)
 	UpdateFraudRule(rule dto.FraudRuleDTO) error
 	CreateFraudRule(rule dto.FraudRuleDTO) error
