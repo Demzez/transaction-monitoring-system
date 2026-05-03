@@ -561,6 +561,94 @@ func (x *RespDoubtfulTransactionList) GetDoubtfulTransactions() []*RespDoubtfulT
 	return nil
 }
 
+type ReqChangeDecision struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	Decision      string                 `protobuf:"bytes,2,opt,name=decision,proto3" json:"decision,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReqChangeDecision) Reset() {
+	*x = ReqChangeDecision{}
+	mi := &file_protoStruct_messages_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReqChangeDecision) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReqChangeDecision) ProtoMessage() {}
+
+func (x *ReqChangeDecision) ProtoReflect() protoreflect.Message {
+	mi := &file_protoStruct_messages_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReqChangeDecision.ProtoReflect.Descriptor instead.
+func (*ReqChangeDecision) Descriptor() ([]byte, []int) {
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ReqChangeDecision) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
+}
+
+func (x *ReqChangeDecision) GetDecision() string {
+	if x != nil {
+		return x.Decision
+	}
+	return ""
+}
+
+type RespChangeDecision struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RespChangeDecision) Reset() {
+	*x = RespChangeDecision{}
+	mi := &file_protoStruct_messages_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RespChangeDecision) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RespChangeDecision) ProtoMessage() {}
+
+func (x *RespChangeDecision) ProtoReflect() protoreflect.Message {
+	mi := &file_protoStruct_messages_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RespChangeDecision.ProtoReflect.Descriptor instead.
+func (*RespChangeDecision) Descriptor() ([]byte, []int) {
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{11}
+}
+
 // ------------------------------------------- Структуры пользователей
 type ReqRegistration struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -572,7 +660,7 @@ type ReqRegistration struct {
 
 func (x *ReqRegistration) Reset() {
 	*x = ReqRegistration{}
-	mi := &file_protoStruct_messages_proto_msgTypes[10]
+	mi := &file_protoStruct_messages_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -584,7 +672,7 @@ func (x *ReqRegistration) String() string {
 func (*ReqRegistration) ProtoMessage() {}
 
 func (x *ReqRegistration) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[10]
+	mi := &file_protoStruct_messages_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -597,7 +685,7 @@ func (x *ReqRegistration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqRegistration.ProtoReflect.Descriptor instead.
 func (*ReqRegistration) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{10}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ReqRegistration) GetLogin() string {
@@ -622,7 +710,7 @@ type RespRegistration struct {
 
 func (x *RespRegistration) Reset() {
 	*x = RespRegistration{}
-	mi := &file_protoStruct_messages_proto_msgTypes[11]
+	mi := &file_protoStruct_messages_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -634,7 +722,7 @@ func (x *RespRegistration) String() string {
 func (*RespRegistration) ProtoMessage() {}
 
 func (x *RespRegistration) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[11]
+	mi := &file_protoStruct_messages_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -647,7 +735,7 @@ func (x *RespRegistration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespRegistration.ProtoReflect.Descriptor instead.
 func (*RespRegistration) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{11}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{13}
 }
 
 type ReqAuthentication struct {
@@ -660,7 +748,7 @@ type ReqAuthentication struct {
 
 func (x *ReqAuthentication) Reset() {
 	*x = ReqAuthentication{}
-	mi := &file_protoStruct_messages_proto_msgTypes[12]
+	mi := &file_protoStruct_messages_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -672,7 +760,7 @@ func (x *ReqAuthentication) String() string {
 func (*ReqAuthentication) ProtoMessage() {}
 
 func (x *ReqAuthentication) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[12]
+	mi := &file_protoStruct_messages_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -685,7 +773,7 @@ func (x *ReqAuthentication) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqAuthentication.ProtoReflect.Descriptor instead.
 func (*ReqAuthentication) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{12}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ReqAuthentication) GetLogin() string {
@@ -712,7 +800,7 @@ type RespAuthentication struct {
 
 func (x *RespAuthentication) Reset() {
 	*x = RespAuthentication{}
-	mi := &file_protoStruct_messages_proto_msgTypes[13]
+	mi := &file_protoStruct_messages_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -724,7 +812,7 @@ func (x *RespAuthentication) String() string {
 func (*RespAuthentication) ProtoMessage() {}
 
 func (x *RespAuthentication) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[13]
+	mi := &file_protoStruct_messages_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -737,7 +825,7 @@ func (x *RespAuthentication) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespAuthentication.ProtoReflect.Descriptor instead.
 func (*RespAuthentication) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{13}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *RespAuthentication) GetNewToken() string {
@@ -763,7 +851,7 @@ type ReqUser struct {
 
 func (x *ReqUser) Reset() {
 	*x = ReqUser{}
-	mi := &file_protoStruct_messages_proto_msgTypes[14]
+	mi := &file_protoStruct_messages_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -775,7 +863,7 @@ func (x *ReqUser) String() string {
 func (*ReqUser) ProtoMessage() {}
 
 func (x *ReqUser) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[14]
+	mi := &file_protoStruct_messages_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -788,7 +876,7 @@ func (x *ReqUser) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqUser.ProtoReflect.Descriptor instead.
 func (*ReqUser) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{14}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ReqUser) GetUserId() int64 {
@@ -810,7 +898,7 @@ type RespUser struct {
 
 func (x *RespUser) Reset() {
 	*x = RespUser{}
-	mi := &file_protoStruct_messages_proto_msgTypes[15]
+	mi := &file_protoStruct_messages_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -822,7 +910,7 @@ func (x *RespUser) String() string {
 func (*RespUser) ProtoMessage() {}
 
 func (x *RespUser) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[15]
+	mi := &file_protoStruct_messages_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -835,7 +923,7 @@ func (x *RespUser) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespUser.ProtoReflect.Descriptor instead.
 func (*RespUser) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{15}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RespUser) GetUserId() int64 {
@@ -875,7 +963,7 @@ type RespUserList struct {
 
 func (x *RespUserList) Reset() {
 	*x = RespUserList{}
-	mi := &file_protoStruct_messages_proto_msgTypes[16]
+	mi := &file_protoStruct_messages_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -887,7 +975,7 @@ func (x *RespUserList) String() string {
 func (*RespUserList) ProtoMessage() {}
 
 func (x *RespUserList) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[16]
+	mi := &file_protoStruct_messages_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -900,7 +988,7 @@ func (x *RespUserList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespUserList.ProtoReflect.Descriptor instead.
 func (*RespUserList) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{16}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *RespUserList) GetUsers() []*RespUser {
@@ -920,7 +1008,7 @@ type ReqFraudRule struct {
 
 func (x *ReqFraudRule) Reset() {
 	*x = ReqFraudRule{}
-	mi := &file_protoStruct_messages_proto_msgTypes[17]
+	mi := &file_protoStruct_messages_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -932,7 +1020,7 @@ func (x *ReqFraudRule) String() string {
 func (*ReqFraudRule) ProtoMessage() {}
 
 func (x *ReqFraudRule) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[17]
+	mi := &file_protoStruct_messages_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -945,7 +1033,7 @@ func (x *ReqFraudRule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqFraudRule.ProtoReflect.Descriptor instead.
 func (*ReqFraudRule) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{17}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ReqFraudRule) GetRuleId() int64 {
@@ -970,7 +1058,7 @@ type RespFraudRule struct {
 
 func (x *RespFraudRule) Reset() {
 	*x = RespFraudRule{}
-	mi := &file_protoStruct_messages_proto_msgTypes[18]
+	mi := &file_protoStruct_messages_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -982,7 +1070,7 @@ func (x *RespFraudRule) String() string {
 func (*RespFraudRule) ProtoMessage() {}
 
 func (x *RespFraudRule) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[18]
+	mi := &file_protoStruct_messages_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -995,7 +1083,7 @@ func (x *RespFraudRule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespFraudRule.ProtoReflect.Descriptor instead.
 func (*RespFraudRule) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{18}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *RespFraudRule) GetRuleId() int64 {
@@ -1055,7 +1143,7 @@ type ReqFraudRuleList struct {
 
 func (x *ReqFraudRuleList) Reset() {
 	*x = ReqFraudRuleList{}
-	mi := &file_protoStruct_messages_proto_msgTypes[19]
+	mi := &file_protoStruct_messages_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1067,7 +1155,7 @@ func (x *ReqFraudRuleList) String() string {
 func (*ReqFraudRuleList) ProtoMessage() {}
 
 func (x *ReqFraudRuleList) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[19]
+	mi := &file_protoStruct_messages_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1080,7 +1168,7 @@ func (x *ReqFraudRuleList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqFraudRuleList.ProtoReflect.Descriptor instead.
 func (*ReqFraudRuleList) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{19}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{21}
 }
 
 type RespFraudRuleList struct {
@@ -1092,7 +1180,7 @@ type RespFraudRuleList struct {
 
 func (x *RespFraudRuleList) Reset() {
 	*x = RespFraudRuleList{}
-	mi := &file_protoStruct_messages_proto_msgTypes[20]
+	mi := &file_protoStruct_messages_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1104,7 +1192,7 @@ func (x *RespFraudRuleList) String() string {
 func (*RespFraudRuleList) ProtoMessage() {}
 
 func (x *RespFraudRuleList) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[20]
+	mi := &file_protoStruct_messages_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1117,7 +1205,7 @@ func (x *RespFraudRuleList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespFraudRuleList.ProtoReflect.Descriptor instead.
 func (*RespFraudRuleList) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{20}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *RespFraudRuleList) GetFraudRules() []*RespFraudRule {
@@ -1142,7 +1230,7 @@ type ReqChangeFraudRule struct {
 
 func (x *ReqChangeFraudRule) Reset() {
 	*x = ReqChangeFraudRule{}
-	mi := &file_protoStruct_messages_proto_msgTypes[21]
+	mi := &file_protoStruct_messages_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1154,7 +1242,7 @@ func (x *ReqChangeFraudRule) String() string {
 func (*ReqChangeFraudRule) ProtoMessage() {}
 
 func (x *ReqChangeFraudRule) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[21]
+	mi := &file_protoStruct_messages_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1167,7 +1255,7 @@ func (x *ReqChangeFraudRule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqChangeFraudRule.ProtoReflect.Descriptor instead.
 func (*ReqChangeFraudRule) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{21}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ReqChangeFraudRule) GetRuleId() int64 {
@@ -1219,6 +1307,42 @@ func (x *ReqChangeFraudRule) GetAddRisk() int64 {
 	return 0
 }
 
+type RespChangeFraudRule struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RespChangeFraudRule) Reset() {
+	*x = RespChangeFraudRule{}
+	mi := &file_protoStruct_messages_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RespChangeFraudRule) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RespChangeFraudRule) ProtoMessage() {}
+
+func (x *RespChangeFraudRule) ProtoReflect() protoreflect.Message {
+	mi := &file_protoStruct_messages_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RespChangeFraudRule.ProtoReflect.Descriptor instead.
+func (*RespChangeFraudRule) Descriptor() ([]byte, []int) {
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{24}
+}
+
 var File_protoStruct_messages_proto protoreflect.FileDescriptor
 
 const file_protoStruct_messages_proto_rawDesc = "" +
@@ -1258,7 +1382,11 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\bdecision\x18\x04 \x01(\tR\bdecision\"\x1c\n" +
 	"\x1aReqDoubtfulTransactionList\"u\n" +
 	"\x1bRespDoubtfulTransactionList\x12V\n" +
-	"\x15doubtful_transactions\x18\x01 \x03(\v2!.messages.RespDoubtfulTransactionR\x14doubtfulTransactions\"C\n" +
+	"\x15doubtful_transactions\x18\x01 \x03(\v2!.messages.RespDoubtfulTransactionR\x14doubtfulTransactions\"V\n" +
+	"\x11ReqChangeDecision\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\x12\x1a\n" +
+	"\bdecision\x18\x02 \x01(\tR\bdecision\"\x14\n" +
+	"\x12RespChangeDecision\"C\n" +
 	"\x0fReqRegistration\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x12\n" +
@@ -1302,7 +1430,8 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"field_name\x18\x04 \x01(\tR\tfieldName\x12\x1a\n" +
 	"\boperator\x18\x05 \x01(\tR\boperator\x12\x14\n" +
 	"\x05value\x18\x06 \x01(\tR\x05value\x12\x19\n" +
-	"\badd_risk\x18\a \x01(\x03R\aaddRiskB\x0fZ\r./protoStructb\x06proto3"
+	"\badd_risk\x18\a \x01(\x03R\aaddRisk\"\x15\n" +
+	"\x13RespChangeFraudRuleB\x0fZ\r./protoStructb\x06proto3"
 
 var (
 	file_protoStruct_messages_proto_rawDescOnce sync.Once
@@ -1316,7 +1445,7 @@ func file_protoStruct_messages_proto_rawDescGZIP() []byte {
 	return file_protoStruct_messages_proto_rawDescData
 }
 
-var file_protoStruct_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_protoStruct_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_protoStruct_messages_proto_goTypes = []any{
 	(*Request)(nil),                     // 0: messages.Request
 	(*Response)(nil),                    // 1: messages.Response
@@ -1328,24 +1457,27 @@ var file_protoStruct_messages_proto_goTypes = []any{
 	(*RespDoubtfulTransaction)(nil),     // 7: messages.RespDoubtfulTransaction
 	(*ReqDoubtfulTransactionList)(nil),  // 8: messages.ReqDoubtfulTransactionList
 	(*RespDoubtfulTransactionList)(nil), // 9: messages.RespDoubtfulTransactionList
-	(*ReqRegistration)(nil),             // 10: messages.ReqRegistration
-	(*RespRegistration)(nil),            // 11: messages.RespRegistration
-	(*ReqAuthentication)(nil),           // 12: messages.ReqAuthentication
-	(*RespAuthentication)(nil),          // 13: messages.RespAuthentication
-	(*ReqUser)(nil),                     // 14: messages.ReqUser
-	(*RespUser)(nil),                    // 15: messages.RespUser
-	(*RespUserList)(nil),                // 16: messages.RespUserList
-	(*ReqFraudRule)(nil),                // 17: messages.ReqFraudRule
-	(*RespFraudRule)(nil),               // 18: messages.RespFraudRule
-	(*ReqFraudRuleList)(nil),            // 19: messages.ReqFraudRuleList
-	(*RespFraudRuleList)(nil),           // 20: messages.RespFraudRuleList
-	(*ReqChangeFraudRule)(nil),          // 21: messages.ReqChangeFraudRule
+	(*ReqChangeDecision)(nil),           // 10: messages.ReqChangeDecision
+	(*RespChangeDecision)(nil),          // 11: messages.RespChangeDecision
+	(*ReqRegistration)(nil),             // 12: messages.ReqRegistration
+	(*RespRegistration)(nil),            // 13: messages.RespRegistration
+	(*ReqAuthentication)(nil),           // 14: messages.ReqAuthentication
+	(*RespAuthentication)(nil),          // 15: messages.RespAuthentication
+	(*ReqUser)(nil),                     // 16: messages.ReqUser
+	(*RespUser)(nil),                    // 17: messages.RespUser
+	(*RespUserList)(nil),                // 18: messages.RespUserList
+	(*ReqFraudRule)(nil),                // 19: messages.ReqFraudRule
+	(*RespFraudRule)(nil),               // 20: messages.RespFraudRule
+	(*ReqFraudRuleList)(nil),            // 21: messages.ReqFraudRuleList
+	(*RespFraudRuleList)(nil),           // 22: messages.RespFraudRuleList
+	(*ReqChangeFraudRule)(nil),          // 23: messages.ReqChangeFraudRule
+	(*RespChangeFraudRule)(nil),         // 24: messages.RespChangeFraudRule
 }
 var file_protoStruct_messages_proto_depIdxs = []int32{
 	3,  // 0: messages.RespTransactionList.transactions:type_name -> messages.RespTransaction
 	7,  // 1: messages.RespDoubtfulTransactionList.doubtful_transactions:type_name -> messages.RespDoubtfulTransaction
-	15, // 2: messages.RespUserList.users:type_name -> messages.RespUser
-	18, // 3: messages.RespFraudRuleList.fraud_rules:type_name -> messages.RespFraudRule
+	17, // 2: messages.RespUserList.users:type_name -> messages.RespUser
+	20, // 3: messages.RespFraudRuleList.fraud_rules:type_name -> messages.RespFraudRule
 	4,  // [4:4] is the sub-list for method output_type
 	4,  // [4:4] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name
@@ -1364,7 +1496,7 @@ func file_protoStruct_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protoStruct_messages_proto_rawDesc), len(file_protoStruct_messages_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   22,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

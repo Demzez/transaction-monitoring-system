@@ -57,6 +57,14 @@ message RespDoubtfulTransactionList {
   repeated RespDoubtfulTransaction doubtful_transactions = 1;
 }
 
+message ReqChangeDecision {
+  int64 transaction_id = 1;
+  string decision = 2;
+}
+message RespChangeDecision {
+  // empty slice of byte
+}
+
 // ------------------------------------------- Структуры пользователей
 message ReqRegistration {
   string login = 1;
@@ -118,5 +126,8 @@ message ReqChangeFraudRule {
   string operator = 5;
   string value = 6;
   int64 add_risk = 7;
+}
+message RespChangeFraudRule {
+  // empty slice of byte
 }
 

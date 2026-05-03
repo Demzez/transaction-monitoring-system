@@ -86,6 +86,21 @@ func (r *Repository) GetAllTransactions() ([]dto.TransactionDTO, error) {
 	return transactions, nil
 }
 
+func (r *Repository) UpdateTransactionStatusById(transactionId int64, status string) error {
+	const op = "internal.repository.postgres.doubtful-transaction.UpdateStatusById"
+
+	result, err := r.db.Exec(context.Background(),
+		`UPDATE "transaction" SET status = $2 WHERE transaction_id = $1`, transactionId, status)
+	if err != nil {
+		return fmt.Errorf("%s : %s", op, err)
+	}
+	if result.RowsAffected() == 0 {
+		return fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
+	}
+
+	return nil
+}
+
 func (r *Repository) DeleteTransactionByHash(transactionHash string) error {
 	const op = "internal.repository.postgres.transaction.DeleteTransaction"
 

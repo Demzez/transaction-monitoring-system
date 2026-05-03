@@ -28,6 +28,21 @@ func (r *Repository) CreateDoubtfulTransaction(dlTransaction dto.DoubtfulTransac
 	return nil
 }
 
+func (r *Repository) UpdateDecisionByTrId(transactionId int64, decision string) error {
+	const op = "internal.repository.postgres.doubtful-transaction.UpdateDecisionByTrId"
+
+	result, err := r.db.Exec(context.Background(),
+		`UPDATE "doubtful_transaction" SET decision = $2 WHERE transaction_id = $1`, transactionId, decision)
+	if err != nil {
+		return fmt.Errorf("%s : %s", op, err)
+	}
+	if result.RowsAffected() == 0 {
+		return fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
+	}
+
+	return nil
+}
+
 func (r *Repository) GetDoubtfulTransactionById(assessmentId int64) (dto.DoubtfulTransactionDTO, error) {
 	const op = "internal.repository.postgres.doubtful-transaction.GetDoubtfulTransaction"
 
@@ -79,11 +94,11 @@ func (r *Repository) GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO,
 	return dlTransactions, nil
 }
 
-func (r *Repository) DeleteDoubtfulTransactionById(assessmentId int64) error {
+func (r *Repository) DeleteDoubtfulTransactionByTrId(transactionId int64) error {
 	const op = "internal.repository.postgres.doubtful-transaction.DeleteDoubtfulTransaction"
 
 	res, err := r.db.Exec(context.Background(),
-		`DELETE FROM "doubtful_transaction" WHERE assessment_id = $1`, assessmentId)
+		`DELETE FROM "doubtful_transaction" WHERE transaction_id = $1`, transactionId)
 	if err != nil {
 		return fmt.Errorf("%s : %s", op, err)
 	}

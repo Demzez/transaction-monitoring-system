@@ -20,3 +20,29 @@ func (s *TransactionService) GetDoubtfulTransactions() ([]dto.DoubtfulTransactio
 
 	return dlTransactions, err
 }
+
+func (s *TransactionService) ChangeDecision(transactionId int64, decision string) error {
+	var status string
+
+	switch decision {
+	case Innocent:
+		status = Approved
+	case Block:
+		status = Rejected
+	default:
+		s.log.Warn("unknown decision", slog.String("extra", "decision:"+decision))
+		return errors.New("unknown decision")
+	}
+
+	err := s.r.UpdateDecisionByTrId(transactionId, decision)
+	if err != nil {
+		s.log.Warn("failed to update doubtful_transaction decision", slog.String("extra", err.Error()))
+	}
+
+	err = s.r.UpdateTransactionStatusById(transactionId, status)
+	if err != nil {
+		s.log.Warn("failed to update transaction status", slog.String("extra", err.Error()))
+	}
+
+	return nil
+}

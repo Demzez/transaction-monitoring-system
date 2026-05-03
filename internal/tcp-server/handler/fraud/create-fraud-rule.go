@@ -6,7 +6,7 @@ import (
 	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/tcp-server/writers"
 	"transaction-monitoring-system/protoStruct"
-
+	
 	"google.golang.org/protobuf/proto"
 )
 
@@ -29,14 +29,14 @@ func NewCreateFraudRuleHandler(log *slog.Logger, service Creator, wr writers.WrI
 }
 
 func (h *CreateFraudRuleHandler) Handle(conn net.Conn, req *protoStruct.Request) {
-
+	
 	const op = "internal.tcp-server.handler.fraud.create-fraud-rule.Handle"
-
+	
 	handlerLog := h.log.With(
 		slog.String("op", op),
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
-
+	
 	var pd protoStruct.ReqChangeFraudRule
 	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
 		handlerLog.Error("failed to unmarshal payload", slog.String("error", err.Error()))
@@ -44,7 +44,7 @@ func (h *CreateFraudRuleHandler) Handle(conn net.Conn, req *protoStruct.Request)
 			handlerLog.Error("failed to response with error", slog.String("error", err.Error()))
 		}
 	}
-
+	
 	rule := dto.FraudRuleDTO{
 		RuleID:    pd.RuleId,
 		Name:      pd.Name,
@@ -54,7 +54,7 @@ func (h *CreateFraudRuleHandler) Handle(conn net.Conn, req *protoStruct.Request)
 		Value:     pd.Value,
 		AddRisk:   pd.AddRisk,
 	}
-
+	
 	err := h.service.CreateFraudRule(rule)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
@@ -62,11 +62,12 @@ func (h *CreateFraudRuleHandler) Handle(conn net.Conn, req *protoStruct.Request)
 		}
 		return
 	}
-
-	if err = h.wr.WriteResponse(conn, make([]byte, 0)); err != nil {
+	
+	data := make([]byte, 0)
+	if err = h.wr.WriteResponse(conn, data); err != nil {
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
-
+	
 	handlerLog.Info("create fraud-rule succeed")
 }
 

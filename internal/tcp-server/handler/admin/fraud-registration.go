@@ -48,7 +48,8 @@ func (h *FraudRegistrationHandler) Handle(conn net.Conn, req *protoStruct.Reques
 		return
 	}
 
-	if err = h.wr.WriteResponse(conn, make([]byte, 0)); err != nil {
+	data := make([]byte, 0)
+	if err = h.wr.WriteResponse(conn, data); err != nil {
 		handlerLog.Error("failed to response", slog.String("error", err.Error()))
 	}
 
