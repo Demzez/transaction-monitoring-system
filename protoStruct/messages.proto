@@ -71,7 +71,7 @@ message ReqRegistration {
   string password = 2;
 }
 message RespRegistration {
- string key = 1;
+ // empty slice of byte
 }
 message ReqAuthentication {
   string login = 1;
@@ -90,6 +90,10 @@ message RespUser {
   string login = 2;
   int64 role_id = 3;
   int64 created_at = 4;
+}
+
+message ReqUserList {
+  string key = 1;
 }
 message RespUserList {
   repeated RespUser users = 1;

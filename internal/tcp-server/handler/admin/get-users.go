@@ -11,7 +11,7 @@ import (
 )
 
 type UsersGetter interface {
-	GetUsers() ([]dto.UserDTO, error)
+	GetUsers(key string) ([]dto.UserDTO, error)
 }
 
 type GetUsersHandler struct {
@@ -37,7 +37,16 @@ func (h *GetUsersHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	userDTOs, err := h.service.GetUsers()
+	var pd protoStruct.ReqUserList
+	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
+		handlerLog.Error("failed to unmarshal payload", slog.String("error", err.Error()))
+		if err = h.wr.WriteError(conn, "bad request"); err != nil {
+			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
+		}
+		return
+	}
+
+	userDTOs, err := h.service.GetUsers(pd.Key)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))

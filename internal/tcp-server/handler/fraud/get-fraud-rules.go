@@ -11,7 +11,7 @@ import (
 )
 
 type FraudRulesGetter interface {
-	GetFraudRules() ([]dto.FraudRuleDTO, error)
+	GetFraudRules(key string) ([]dto.FraudRuleDTO, error)
 }
 
 type GetFraudRulesHandler struct {
@@ -36,7 +36,16 @@ func (h *GetFraudRulesHandler) Handle(conn net.Conn, req *protoStruct.Request) {
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	fraudRulesDTOs, err := h.service.GetFraudRules()
+	var pd protoStruct.ReqFraudRuleList
+	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
+		handlerLog.Error("failed to unmarshal payload", slog.String("error", err.Error()))
+		if err = h.wr.WriteError(conn, "bad request"); err != nil {
+			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
+		}
+		return
+	}
+
+	fraudRulesDTOs, err := h.service.GetFraudRules(pd.Key)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))

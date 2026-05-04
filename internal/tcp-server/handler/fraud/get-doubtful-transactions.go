@@ -11,7 +11,7 @@ import (
 )
 
 type DoubtfulTransactionsGetter interface {
-	GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
+	GetDoubtfulTransactions(key string) ([]dto.DoubtfulTransactionDTO, error)
 }
 
 type GetDoubtfulTransactionsHandler struct {
@@ -36,7 +36,16 @@ func (h *GetDoubtfulTransactionsHandler) Handle(conn net.Conn, req *protoStruct.
 		slog.String("remoteAddr", conn.RemoteAddr().String()),
 	)
 
-	dlTransactionDTOs, err := h.service.GetDoubtfulTransactions()
+	var pd protoStruct.ReqDoubtfulTransactionList
+	if err := proto.Unmarshal(req.Payload, &pd); err != nil {
+		handlerLog.Error("failed to unmarshal payload", slog.String("error", err.Error()))
+		if err = h.wr.WriteError(conn, "bad request"); err != nil {
+			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
+		}
+		return
+	}
+
+	dlTransactionDTOs, err := h.service.GetDoubtfulTransactions(pd.Key)
 	if err != nil {
 		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))

@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/repository"
+	search_query "transaction-monitoring-system/internal/repository/postgres/search-query"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -46,11 +48,19 @@ func (r *Repository) UpdateFraudRule(rule dto.FraudRuleDTO) error {
 	return nil
 }
 
-func (r *Repository) GetAllFraudRules() ([]dto.FraudRuleDTO, error) {
-	const op = "internal.repository.postgres.fraud-rule.GetActiveFrudRules"
+func (r *Repository) GetFraudRulesByKey(key string) ([]dto.FraudRuleDTO, error) {
+	const op = "internal.repository.postgres.fraud-rule.GetFraudRulesByKey"
 
-	rows, err := r.db.Query(context.Background(),
-		`SELECT rule_id, name, active, field_name, operator, value, add_risk FROM "fraud_rule"`)
+	query, like := search_query.BuildFraudRuleQuery(key)
+
+	var rows pgx.Rows
+	var err error
+
+	if like == "" {
+		rows, err = r.db.Query(context.Background(), query)
+	} else {
+		rows, err = r.db.Query(context.Background(), query, like)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}

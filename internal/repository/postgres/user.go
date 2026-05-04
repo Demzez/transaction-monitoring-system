@@ -8,6 +8,7 @@ import (
 	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/lib/security/crypt"
 	"transaction-monitoring-system/internal/repository"
+	search_query "transaction-monitoring-system/internal/repository/postgres/search-query"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -66,11 +67,19 @@ func (r *Repository) Authenticate(username, password string) (int64, error) {
 	return roleId, nil
 }
 
-func (r *Repository) GetAllUsers() ([]dto.UserDTO, error) {
-	const op = "internal.repository.postgres.user.GetAllUsers"
+func (r *Repository) GetUsersByKey(key string) ([]dto.UserDTO, error) {
+	const op = "internal.repository.postgres.user.GetUsersByKey"
 
-	rows, err := r.db.Query(context.Background(),
-		`SELECT user_id, login, role_id, created_at FROM "user"`)
+	query, like := search_query.BuildUserQuery(key)
+
+	var rows pgx.Rows
+	var err error
+
+	if like == "" {
+		rows, err = r.db.Query(context.Background(), query)
+	} else {
+		rows, err = r.db.Query(context.Background(), query, like)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}

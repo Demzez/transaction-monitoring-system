@@ -720,7 +720,6 @@ func (x *ReqRegistration) GetPassword() string {
 
 type RespRegistration struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -753,13 +752,6 @@ func (x *RespRegistration) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RespRegistration.ProtoReflect.Descriptor instead.
 func (*RespRegistration) Descriptor() ([]byte, []int) {
 	return file_protoStruct_messages_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *RespRegistration) GetKey() string {
-	if x != nil {
-		return x.Key
-	}
-	return ""
 }
 
 type ReqAuthentication struct {
@@ -978,6 +970,50 @@ func (x *RespUser) GetCreatedAt() int64 {
 	return 0
 }
 
+type ReqUserList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReqUserList) Reset() {
+	*x = ReqUserList{}
+	mi := &file_protoStruct_messages_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReqUserList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReqUserList) ProtoMessage() {}
+
+func (x *ReqUserList) ProtoReflect() protoreflect.Message {
+	mi := &file_protoStruct_messages_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReqUserList.ProtoReflect.Descriptor instead.
+func (*ReqUserList) Descriptor() ([]byte, []int) {
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *ReqUserList) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
 type RespUserList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Users         []*RespUser            `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
@@ -987,7 +1023,7 @@ type RespUserList struct {
 
 func (x *RespUserList) Reset() {
 	*x = RespUserList{}
-	mi := &file_protoStruct_messages_proto_msgTypes[18]
+	mi := &file_protoStruct_messages_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -999,7 +1035,7 @@ func (x *RespUserList) String() string {
 func (*RespUserList) ProtoMessage() {}
 
 func (x *RespUserList) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[18]
+	mi := &file_protoStruct_messages_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1012,7 +1048,7 @@ func (x *RespUserList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespUserList.ProtoReflect.Descriptor instead.
 func (*RespUserList) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{18}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *RespUserList) GetUsers() []*RespUser {
@@ -1032,7 +1068,7 @@ type ReqFraudRule struct {
 
 func (x *ReqFraudRule) Reset() {
 	*x = ReqFraudRule{}
-	mi := &file_protoStruct_messages_proto_msgTypes[19]
+	mi := &file_protoStruct_messages_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1044,7 +1080,7 @@ func (x *ReqFraudRule) String() string {
 func (*ReqFraudRule) ProtoMessage() {}
 
 func (x *ReqFraudRule) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[19]
+	mi := &file_protoStruct_messages_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1057,7 +1093,7 @@ func (x *ReqFraudRule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqFraudRule.ProtoReflect.Descriptor instead.
 func (*ReqFraudRule) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{19}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ReqFraudRule) GetRuleId() int64 {
@@ -1082,7 +1118,7 @@ type RespFraudRule struct {
 
 func (x *RespFraudRule) Reset() {
 	*x = RespFraudRule{}
-	mi := &file_protoStruct_messages_proto_msgTypes[20]
+	mi := &file_protoStruct_messages_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1094,7 +1130,7 @@ func (x *RespFraudRule) String() string {
 func (*RespFraudRule) ProtoMessage() {}
 
 func (x *RespFraudRule) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[20]
+	mi := &file_protoStruct_messages_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1107,7 +1143,7 @@ func (x *RespFraudRule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespFraudRule.ProtoReflect.Descriptor instead.
 func (*RespFraudRule) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{20}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *RespFraudRule) GetRuleId() int64 {
@@ -1168,7 +1204,7 @@ type ReqFraudRuleList struct {
 
 func (x *ReqFraudRuleList) Reset() {
 	*x = ReqFraudRuleList{}
-	mi := &file_protoStruct_messages_proto_msgTypes[21]
+	mi := &file_protoStruct_messages_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1180,7 +1216,7 @@ func (x *ReqFraudRuleList) String() string {
 func (*ReqFraudRuleList) ProtoMessage() {}
 
 func (x *ReqFraudRuleList) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[21]
+	mi := &file_protoStruct_messages_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1193,7 +1229,7 @@ func (x *ReqFraudRuleList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqFraudRuleList.ProtoReflect.Descriptor instead.
 func (*ReqFraudRuleList) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{21}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ReqFraudRuleList) GetKey() string {
@@ -1212,7 +1248,7 @@ type RespFraudRuleList struct {
 
 func (x *RespFraudRuleList) Reset() {
 	*x = RespFraudRuleList{}
-	mi := &file_protoStruct_messages_proto_msgTypes[22]
+	mi := &file_protoStruct_messages_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1224,7 +1260,7 @@ func (x *RespFraudRuleList) String() string {
 func (*RespFraudRuleList) ProtoMessage() {}
 
 func (x *RespFraudRuleList) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[22]
+	mi := &file_protoStruct_messages_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1237,7 +1273,7 @@ func (x *RespFraudRuleList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespFraudRuleList.ProtoReflect.Descriptor instead.
 func (*RespFraudRuleList) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{22}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *RespFraudRuleList) GetFraudRules() []*RespFraudRule {
@@ -1262,7 +1298,7 @@ type ReqChangeFraudRule struct {
 
 func (x *ReqChangeFraudRule) Reset() {
 	*x = ReqChangeFraudRule{}
-	mi := &file_protoStruct_messages_proto_msgTypes[23]
+	mi := &file_protoStruct_messages_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1274,7 +1310,7 @@ func (x *ReqChangeFraudRule) String() string {
 func (*ReqChangeFraudRule) ProtoMessage() {}
 
 func (x *ReqChangeFraudRule) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[23]
+	mi := &file_protoStruct_messages_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1287,7 +1323,7 @@ func (x *ReqChangeFraudRule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReqChangeFraudRule.ProtoReflect.Descriptor instead.
 func (*ReqChangeFraudRule) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{23}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ReqChangeFraudRule) GetRuleId() int64 {
@@ -1347,7 +1383,7 @@ type RespChangeFraudRule struct {
 
 func (x *RespChangeFraudRule) Reset() {
 	*x = RespChangeFraudRule{}
-	mi := &file_protoStruct_messages_proto_msgTypes[24]
+	mi := &file_protoStruct_messages_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1359,7 +1395,7 @@ func (x *RespChangeFraudRule) String() string {
 func (*RespChangeFraudRule) ProtoMessage() {}
 
 func (x *RespChangeFraudRule) ProtoReflect() protoreflect.Message {
-	mi := &file_protoStruct_messages_proto_msgTypes[24]
+	mi := &file_protoStruct_messages_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1372,7 +1408,7 @@ func (x *RespChangeFraudRule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespChangeFraudRule.ProtoReflect.Descriptor instead.
 func (*RespChangeFraudRule) Descriptor() ([]byte, []int) {
-	return file_protoStruct_messages_proto_rawDescGZIP(), []int{24}
+	return file_protoStruct_messages_proto_rawDescGZIP(), []int{25}
 }
 
 var File_protoStruct_messages_proto protoreflect.FileDescriptor
@@ -1423,9 +1459,8 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\x12RespChangeDecision\"C\n" +
 	"\x0fReqRegistration\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"$\n" +
-	"\x10RespRegistration\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\"E\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x12\n" +
+	"\x10RespRegistration\"E\n" +
 	"\x11ReqAuthentication\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"I\n" +
@@ -1439,7 +1474,9 @@ const file_protoStruct_messages_proto_rawDesc = "" +
 	"\x05login\x18\x02 \x01(\tR\x05login\x12\x17\n" +
 	"\arole_id\x18\x03 \x01(\x03R\x06roleId\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\x03R\tcreatedAt\"8\n" +
+	"created_at\x18\x04 \x01(\x03R\tcreatedAt\"\x1f\n" +
+	"\vReqUserList\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\"8\n" +
 	"\fRespUserList\x12(\n" +
 	"\x05users\x18\x01 \x03(\v2\x12.messages.RespUserR\x05users\"'\n" +
 	"\fReqFraudRule\x12\x17\n" +
@@ -1481,7 +1518,7 @@ func file_protoStruct_messages_proto_rawDescGZIP() []byte {
 	return file_protoStruct_messages_proto_rawDescData
 }
 
-var file_protoStruct_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_protoStruct_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_protoStruct_messages_proto_goTypes = []any{
 	(*Request)(nil),                     // 0: messages.Request
 	(*Response)(nil),                    // 1: messages.Response
@@ -1501,19 +1538,20 @@ var file_protoStruct_messages_proto_goTypes = []any{
 	(*RespAuthentication)(nil),          // 15: messages.RespAuthentication
 	(*ReqUser)(nil),                     // 16: messages.ReqUser
 	(*RespUser)(nil),                    // 17: messages.RespUser
-	(*RespUserList)(nil),                // 18: messages.RespUserList
-	(*ReqFraudRule)(nil),                // 19: messages.ReqFraudRule
-	(*RespFraudRule)(nil),               // 20: messages.RespFraudRule
-	(*ReqFraudRuleList)(nil),            // 21: messages.ReqFraudRuleList
-	(*RespFraudRuleList)(nil),           // 22: messages.RespFraudRuleList
-	(*ReqChangeFraudRule)(nil),          // 23: messages.ReqChangeFraudRule
-	(*RespChangeFraudRule)(nil),         // 24: messages.RespChangeFraudRule
+	(*ReqUserList)(nil),                 // 18: messages.ReqUserList
+	(*RespUserList)(nil),                // 19: messages.RespUserList
+	(*ReqFraudRule)(nil),                // 20: messages.ReqFraudRule
+	(*RespFraudRule)(nil),               // 21: messages.RespFraudRule
+	(*ReqFraudRuleList)(nil),            // 22: messages.ReqFraudRuleList
+	(*RespFraudRuleList)(nil),           // 23: messages.RespFraudRuleList
+	(*ReqChangeFraudRule)(nil),          // 24: messages.ReqChangeFraudRule
+	(*RespChangeFraudRule)(nil),         // 25: messages.RespChangeFraudRule
 }
 var file_protoStruct_messages_proto_depIdxs = []int32{
 	3,  // 0: messages.RespTransactionList.transactions:type_name -> messages.RespTransaction
 	7,  // 1: messages.RespDoubtfulTransactionList.doubtful_transactions:type_name -> messages.RespDoubtfulTransaction
 	17, // 2: messages.RespUserList.users:type_name -> messages.RespUser
-	20, // 3: messages.RespFraudRuleList.fraud_rules:type_name -> messages.RespFraudRule
+	21, // 3: messages.RespFraudRuleList.fraud_rules:type_name -> messages.RespFraudRule
 	4,  // [4:4] is the sub-list for method output_type
 	4,  // [4:4] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name
@@ -1532,7 +1570,7 @@ func file_protoStruct_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protoStruct_messages_proto_rawDesc), len(file_protoStruct_messages_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   25,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -6,14 +6,15 @@ import (
 	"fmt"
 	"transaction-monitoring-system/internal/dto"
 	"transaction-monitoring-system/internal/repository"
-	
+	search_query "transaction-monitoring-system/internal/repository/postgres/search-query"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func (r *Repository) CreateDoubtfulTransaction(dlTransaction dto.DoubtfulTransactionDTO) error {
 	const op = "internal.repository.postgres.doubtful-transaction.CreateDoubtfulTransaction"
-	
+
 	_, err := r.db.Exec(context.Background(),
 		`INSERT INTO "doubtful_transaction" (transaction_id, risk_score, description, decision) VALUES ($1, $2, $3, $4)`,
 		dlTransaction.TransactionId, dlTransaction.RiskScore, dlTransaction.Description, dlTransaction.Decision)
@@ -24,13 +25,13 @@ func (r *Repository) CreateDoubtfulTransaction(dlTransaction dto.DoubtfulTransac
 		}
 		return fmt.Errorf("%s : %s", op, err)
 	}
-	
+
 	return nil
 }
 
 func (r *Repository) UpdateDecisionByTrId(transactionId int64, decision string) error {
 	const op = "internal.repository.postgres.doubtful-transaction.UpdateDecisionByTrId"
-	
+
 	result, err := r.db.Exec(context.Background(),
 		`UPDATE "doubtful_transaction" SET decision = $2 WHERE transaction_id = $1`, transactionId, decision)
 	if err != nil {
@@ -39,15 +40,15 @@ func (r *Repository) UpdateDecisionByTrId(transactionId int64, decision string) 
 	if result.RowsAffected() == 0 {
 		return fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
 	}
-	
+
 	return nil
 }
 
 func (r *Repository) GetDoubtfulTransactionById(assessmentId int64) (dto.DoubtfulTransactionDTO, error) {
 	const op = "internal.repository.postgres.doubtful-transaction.GetDoubtfulTransaction"
-	
+
 	var dlTransaction dto.DoubtfulTransactionDTO
-	
+
 	err := r.db.QueryRow(context.Background(),
 		`SELECT transaction_id, risk_score, description, decision FROM "doubtful_transaction" WHERE assessment_id = $1`, assessmentId,
 	).Scan(&dlTransaction.TransactionId, &dlTransaction.RiskScore, &dlTransaction.Description, &dlTransaction.Decision)
@@ -57,20 +58,28 @@ func (r *Repository) GetDoubtfulTransactionById(assessmentId int64) (dto.Doubtfu
 		}
 		return dlTransaction, fmt.Errorf("%s : %s", op, err)
 	}
-	
+
 	return dlTransaction, nil
 }
 
-func (r *Repository) GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error) {
-	const op = "internal.repository.postgres.doubtful-transaction.GetDoubtfulTransactions"
-	
-	rows, err := r.db.Query(context.Background(),
-		`SELECT transaction_id, risk_score, description, decision FROM "doubtful_transaction"`)
+func (r *Repository) GetDoubtfulTransactionsByKey(key string) ([]dto.DoubtfulTransactionDTO, error) {
+	const op = "internal.repository.postgres.doubtful-transaction.GetDoubtfulTransactionsByKey"
+
+	query, like := search_query.BuildDoubtfulTransactionQuery(key)
+
+	var rows pgx.Rows
+	var err error
+
+	if like == "" {
+		rows, err = r.db.Query(context.Background(), query)
+	} else {
+		rows, err = r.db.Query(context.Background(), query, like)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}
 	defer rows.Close()
-	
+
 	var dlTransactions []dto.DoubtfulTransactionDTO
 	for rows.Next() {
 		var dlTransaction dto.DoubtfulTransactionDTO
@@ -84,7 +93,7 @@ func (r *Repository) GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO,
 		}
 		dlTransactions = append(dlTransactions, dlTransaction)
 	}
-	
+
 	if err = rows.Err(); err != nil {
 		return nil, fmt.Errorf("%s : %s", op, err)
 	}
@@ -96,7 +105,7 @@ func (r *Repository) GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO,
 
 func (r *Repository) DeleteDoubtfulTransactionByDecision(decision string) error {
 	const op = "internal.repository.postgres.doubtful-transaction.DeleteDoubtfulTransactionByDecision"
-	
+
 	res, err := r.db.Exec(context.Background(),
 		`DELETE FROM "doubtful_transaction" WHERE decision = $1`, decision)
 	if err != nil {
@@ -105,6 +114,6 @@ func (r *Repository) DeleteDoubtfulTransactionByDecision(decision string) error 
 	if res.RowsAffected() == 0 {
 		return fmt.Errorf("%s : %w", op, repository.ErrRecordNotFound)
 	}
-	
+
 	return nil
 }

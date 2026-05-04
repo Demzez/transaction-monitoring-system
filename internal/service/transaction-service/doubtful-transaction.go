@@ -7,8 +7,8 @@ import (
 	"transaction-monitoring-system/internal/repository"
 )
 
-func (s *TransactionService) GetDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error) {
-	dlTransactions, err := s.r.GetAllDoubtfulTransactions()
+func (s *TransactionService) GetDoubtfulTransactions(key string) ([]dto.DoubtfulTransactionDTO, error) {
+	dlTransactions, err := s.r.GetDoubtfulTransactionsByKey(key)
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordNotFound):

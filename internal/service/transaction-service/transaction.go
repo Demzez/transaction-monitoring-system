@@ -30,7 +30,7 @@ func (s *TransactionService) GetTransaction(transactionId int64) (dto.Transactio
 }
 
 func (s *TransactionService) GetTransactions(key string) ([]dto.TransactionDTO, error) {
-	transactions, err := s.r.GetAllTransactions(key)
+	transactions, err := s.r.GetTransactionsByKey(key)
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordNotFound):

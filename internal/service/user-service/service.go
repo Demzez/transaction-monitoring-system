@@ -9,7 +9,7 @@ import (
 type RepositoryInterface interface {
 	Authenticate(username, password string) (int64, error)
 	Register(login string, password string, role int, createdAt time.Time) error
-	GetAllUsers() ([]dto.UserDTO, error)
+	GetUsersByKey(key string) ([]dto.UserDTO, error)
 	DeleteUserById(userId int64) error
 }
 type UserService struct {

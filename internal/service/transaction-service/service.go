@@ -8,14 +8,14 @@ import (
 type RepositoryInterface interface {
 	CreateTransaction(transaction dto.TransactionDTO) (int64, error)
 	GetTransactionById(id int64) (dto.TransactionDTO, error)
-	GetAllTransactions(key string) ([]dto.TransactionDTO, error)
+	GetTransactionsByKey(key string) ([]dto.TransactionDTO, error)
 	UpdateTransactionStatusById(transactionId int64, status string) error
 	CreateDoubtfulTransaction(dlTransaction dto.DoubtfulTransactionDTO) error
 	UpdateDecisionByTrId(transactionId int64, decision string) error
-	GetAllDoubtfulTransactions() ([]dto.DoubtfulTransactionDTO, error)
+	GetDoubtfulTransactionsByKey(key string) ([]dto.DoubtfulTransactionDTO, error)
 	GetActiveFraudRules() ([]dto.FraudRuleDTO, error)
 	DeleteDoubtfulTransactionByDecision(decision string) error
-	GetAllFraudRules() ([]dto.FraudRuleDTO, error)
+	GetFraudRulesByKey(key string) ([]dto.FraudRuleDTO, error)
 	UpdateFraudRule(rule dto.FraudRuleDTO) error
 	CreateFraudRule(rule dto.FraudRuleDTO) error
 	DeleteFraudRuleById(ruleId int64) error

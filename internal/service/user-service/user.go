@@ -83,8 +83,8 @@ func (s *UserService) GenerateNewUserToken(secret string, expiresIn time.Duratio
 	return newToken, nil
 }
 
-func (s *UserService) GetUsers() ([]dto.UserDTO, error) {
-	transactions, err := s.r.GetAllUsers()
+func (s *UserService) GetUsers(key string) ([]dto.UserDTO, error) {
+	transactions, err := s.r.GetUsersByKey(key)
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordNotFound):

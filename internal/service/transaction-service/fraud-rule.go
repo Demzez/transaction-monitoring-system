@@ -7,8 +7,8 @@ import (
 	"transaction-monitoring-system/internal/repository"
 )
 
-func (s *TransactionService) GetFraudRules() ([]dto.FraudRuleDTO, error) {
-	rules, err := s.r.GetAllFraudRules()
+func (s *TransactionService) GetFraudRules(key string) ([]dto.FraudRuleDTO, error) {
+	rules, err := s.r.GetFraudRulesByKey(key)
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordNotFound):
