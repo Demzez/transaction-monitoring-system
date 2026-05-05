@@ -42,7 +42,7 @@ func (h *FraudRegistrationHandler) Handle(conn net.Conn, req *protoStruct.Reques
 
 	err := h.service.RegisterFraudSpecialist(pd.Login, pd.Password)
 	if err != nil {
-		if err = h.wr.WriteError(conn, "something went wrong"); err != nil {
+		if err = h.wr.WriteError(conn, err.Error()); err != nil {
 			handlerLog.Error("failed to write response with error", slog.String("error", err.Error()))
 		}
 		return

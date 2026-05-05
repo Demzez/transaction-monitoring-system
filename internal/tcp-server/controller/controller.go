@@ -161,7 +161,7 @@ func byteToProtobufRequest(log *slog.Logger, message []byte) (*protoStruct.Reque
 }
 
 func validateTokenJWT(log *slog.Logger, req *protoStruct.Request, jwtSecret string) bool {
-	if req.Type == "authentication" || req.Type == "registration" {
+	if req.Type == "authentication" || req.Type == "manager-registration" {
 		return true
 	}
 
