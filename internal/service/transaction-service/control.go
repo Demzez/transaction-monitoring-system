@@ -60,34 +60,31 @@ func assessmentRisk(riskScore int64) (string, string) {
 		decision = Block
 		status = Rejected
 	}
-	
+
 	return decision, status
 }
 
 func checkRules(rules []dto.FraudRuleDTO, transaction dto.TransactionDTO) (riskScore int64, description string, err error) {
 	var descriptions []string
-	
+
 	for _, rule := range rules {
 		matches, evalErr := evaluateRule(rule, transaction)
 		if evalErr != nil {
 			return 0, "", fmt.Errorf("failed to evaluate rule %s, with rule %s", rule.Name, evalErr.Error())
 		}
-		
+
 		if matches {
 			riskScore += rule.AddRisk
 			descriptions = append(descriptions,
 				fmt.Sprintf("add_risk: %s (%s %s %s); \n", rule.Name, rule.FieldName, rule.Operator, rule.Value))
 		}
 	}
-	
+
 	description = strings.Join(descriptions, "")
-	
+
 	return riskScore, description, nil
 }
 
-// evaluateRule проверяет одно правило для транзакции.
-// Поддерживаются только поля, которые сейчас есть в dto.TransactionDTO (amount, source, direction).
-// Для "in" / "not_in" значение правила должно быть через запятую (например: "bad_user1,bad_user2").
 func evaluateRule(rule dto.FraudRuleDTO, t dto.TransactionDTO) (bool, error) {
 	switch rule.FieldName {
 	case "amount":
@@ -95,7 +92,7 @@ func evaluateRule(rule dto.FraudRuleDTO, t dto.TransactionDTO) (bool, error) {
 		if err != nil {
 			return false, fmt.Errorf("invalid numeric value for amount: %w", err)
 		}
-		
+
 		switch rule.Operator {
 		case ">":
 			return t.Amount > ruleVal, nil
@@ -104,7 +101,7 @@ func evaluateRule(rule dto.FraudRuleDTO, t dto.TransactionDTO) (bool, error) {
 		default:
 			return false, fmt.Errorf("unsupported operator %q for field amount", rule.Operator)
 		}
-	
+
 	case "source":
 		switch rule.Operator {
 		case "=":
@@ -114,9 +111,8 @@ func evaluateRule(rule dto.FraudRuleDTO, t dto.TransactionDTO) (bool, error) {
 		case "like":
 			return like(t.Source, rule.Value)
 		}
-	
+
 	case "direction":
-		// аналогично source
 		switch rule.Operator {
 		case "=":
 			return t.Direction == rule.Value, nil
@@ -126,12 +122,12 @@ func evaluateRule(rule dto.FraudRuleDTO, t dto.TransactionDTO) (bool, error) {
 			return like(t.Direction, rule.Value)
 		}
 	}
-	
+
 	return false, fmt.Errorf("field %q is not supported yet", rule.FieldName)
 }
 
 func (s *TransactionService) Control(transaction dto.TransactionDTO) error {
-	
+
 	rules, err := s.r.GetActiveFraudRules()
 	if err != nil {
 		switch {
@@ -142,14 +138,14 @@ func (s *TransactionService) Control(transaction dto.TransactionDTO) error {
 		}
 		return err
 	}
-	
+
 	riskScore, description, err := checkRules(rules, transaction)
 	if err != nil {
 		s.log.Error("failed to check rules", slog.String("error", err.Error()))
 		return err
 	}
 	decision, status := assessmentRisk(riskScore)
-	
+
 	transaction.Status = status
 	tId, err := s.r.CreateTransaction(transaction)
 	if err != nil {
@@ -161,7 +157,7 @@ func (s *TransactionService) Control(transaction dto.TransactionDTO) error {
 		}
 		return err
 	}
-	
+
 	if decision != Innocent {
 		doubtfulTransaction := dto.DoubtfulTransactionDTO{
 			TransactionId: tId,
@@ -180,17 +176,11 @@ func (s *TransactionService) Control(transaction dto.TransactionDTO) error {
 			return err
 		}
 	}
-	
+
 	s.log.Info("transaction successfully saved",
 		slog.String("hash", transaction.Hash),
 		slog.Int64("risk_score", riskScore),
 		slog.String("decision", decision))
-	
+
 	return nil
 }
-
-// проверка на слишком большую сумму
-// слишком большое кол транзакций за 10 минут от одного отправителя
-// слишком большое кол переводов за 20 минут одному получателю
-// источник есть в черном списке
-// подозрительное местоположение

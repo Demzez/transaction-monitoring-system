@@ -55,7 +55,7 @@ func (s *TransactionService) DeleteFraudRule(ruleId int64) error {
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrRecordNotFound):
-			s.log.Warn("record already exists", slog.String("extra", err.Error()))
+			s.log.Warn("record not found", slog.String("extra", err.Error()))
 		default:
 			s.log.Error("failed to delete fraud-rule", slog.String("error", err.Error()))
 		}

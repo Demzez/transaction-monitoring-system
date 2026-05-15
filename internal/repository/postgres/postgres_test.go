@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRepository_SaveTransaction(t *testing.T) {
+func TestRepository_CreateTransaction(t *testing.T) {
 	cases := []struct {
 		name        string
 		transaction dto.TransactionDTO
@@ -40,7 +40,7 @@ func TestRepository_SaveTransaction(t *testing.T) {
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			},
-			respError: "internal.repository.postgres.transaction.SaveTransaction : " + repository.ErrRecordAlreadyExists.Error(),
+			respError: "internal.repository.postgres.transaction.CreateTransaction : " + repository.ErrRecordAlreadyExists.Error(),
 		},
 	}
 	cfg := config.MustLoad()
@@ -52,7 +52,7 @@ func TestRepository_SaveTransaction(t *testing.T) {
 	for _, tc := range cases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			id, err := repo.SaveTransaction(tc.transaction)
+			id, err := repo.CreateTransaction(tc.transaction)
 			fmt.Println("transaction id: ", id)
 			if err == nil {
 				require.NoError(t, err)
