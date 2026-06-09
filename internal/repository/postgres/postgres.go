@@ -40,6 +40,11 @@ func New(cfg config.PostgresDB) (*Repository, error) {
 		CREATE TABLE IF NOT EXISTS "role" (
 		    role_id SERIAL PRIMARY KEY,
 		    name TEXT NOT NULL UNIQUE);
+		INSERT INTO "role" (role_id, name) VALUES 
+		    (1, 'ROLE_MANAGER'),
+			(2, 'ROLE_FRAUD_SPECIALIST'),
+			(3, 'ROLE_ADMIN')
+			ON CONFLICT (role_id) DO NOTHING;
 
 		CREATE TABLE IF NOT EXISTS "user" (
 			user_id SERIAL PRIMARY KEY,
@@ -59,6 +64,21 @@ func New(cfg config.PostgresDB) (*Repository, error) {
 			operator TEXT NOT NULL,          -- >, <, =, in, not_in
 			value TEXT NOT NULL,             -- значение условия
 			add_risk INT NOT NULL);            -- add risk score
+		INSERT INTO fraud_rule(name, field_name, operator, value, add_risk, active)
+			VALUES
+			('HIGH_AMOUNT', 'amount', '>', '1000000', 30, true),
+			('VERY_HIGH_AMOUNT', 'amount', '>', '5000000', 60, true),
+			('MICRO_TRANSACTION', 'amount', '<', '200', 15, true),
+			
+			('TO_RUSSIA', 'direction', 'like', 'RU-|-', 25, true),
+			('TO_CHINA', 'direction', 'like', 'CN-|-', 35, true),
+			('TO_NORTH_KOREA', 'direction', 'like', 'KP-|-', 80, true),
+			('TO_IRAN', 'direction', 'like', 'IR-|-', 50, true),
+			
+			('FROM_NORTH_KOREA', 'source', 'like', 'KP-|-', 90, true),
+			('ANONYMOUS_SOURCE', 'source', 'like', 'ANON-|-', 70, true),
+			('BLACKLISTED_ACCOUNT', 'source', 'like', 'BLACKLISTED', 100, true)
+			ON CONFLICT (name) DO NOTHING;
 		
 		CREATE TABLE IF NOT EXISTS "doubtful_transaction" (
 			assessment_id SERIAL PRIMARY KEY,

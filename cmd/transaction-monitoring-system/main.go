@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 	"transaction-monitoring-system/internal/config"
 	"transaction-monitoring-system/internal/http-server/handler/receive"
 	"transaction-monitoring-system/internal/lib/logger/slog/slogpretty"
@@ -37,12 +38,23 @@ func main() {
 	defer cancel()
 
 	// init database
-	repository, err := postgres.New(cfg.PostgresDB)
-	if err != nil {
-		log.Error("database is not initialized", slog.String("error", err.Error()))
-		os.Exit(1)
+	var repository *postgres.Repository
+	for i := 0; i < 22; i++ {
+		rep, err := postgres.New(cfg.PostgresDB)
+		if err != nil {
+			log.Error("database is not initialized", slog.String("error", err.Error()))
+			time.Sleep(2 * time.Second)
+			if i == 21 {
+				os.Exit(1)
+			}
+			continue
+		}
+
+		repository = rep
+		log.Info("database is connected", slog.String("connection_pool", repository.Statistic()))
+		break
 	}
-	log.Info("database is connected", slog.String("connection_pool", repository.Statistic()))
+	err := repository.Register("admin", "admin", 3, time.Now())
 
 	//init services
 	transactionService := transaction_service.NewTransactionService(log, repository)

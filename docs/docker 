@@ -1,0 +1,4 @@
+CreateImage: docker build ./ -t tms:1.0
+CreateContainer: docker run --name tms -p 8082:8082 -p 8084:8084 -it tms:1.0 
+
+Main(compose): docker compose --file /home/demzez/Downloads/BSUIR/Course/app/server.yaml up(first)/start/stop
