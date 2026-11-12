@@ -1,0 +1,35 @@
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: local/jenkins-go-docker:2.580.2
+    container_name: local-jenkins
+    restart: unless-stopped
+    init: true
+
+    ports:
+      - "127.0.0.1:8081:8080"
+
+    environment:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=true"
+
+    # Supplementary group matching /var/run/docker.sock on the host.
+    group_add:
+      - "${DOCKER_GID:?Export DOCKER_GID before starting Jenkins}"
+
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      - ci
+
+volumes:
+  jenkins_home:
+    name: jenkins_home
+
+networks:
+  ci:
+    external: true
+    name: tms-ci

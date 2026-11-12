@@ -1,0 +1,24 @@
+jwt:
+  # cleanenv overrides this empty value from JWT_SECRET.
+  secret: ""
+  expiry_in: "1800s"
+
+postgres_db:
+  # The existing PostgreSQL container must be attached to tms-runtime
+  # with the network alias "postgres".
+  host: "postgres"
+  port: "5432"
+  user: "postgres"
+  # cleanenv overrides this empty value from POSTGRES_PASSWORD.
+  password: ""
+  db_name: "main"
+
+http_server:
+  # Listen on all interfaces inside the container.
+  address: "0.0.0.0:8082"
+  timeout: "4s"
+  idle_timeout: "60s"
+
+tcp_server:
+  address: "0.0.0.0:8084"
+  idle_timeout: "600s"
